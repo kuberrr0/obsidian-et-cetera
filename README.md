@@ -2,6 +2,8 @@
 
 A calm, configurable theme for [Obsidian](https://obsidian.md). Pick a color scheme, then shape panes, transparency, borders and headings to taste. Everything is adjustable through the [Style Settings](https://github.com/mgmeyers/obsidian-style-settings) plugin.
 
+![Et Cetera in dark mode](screenshot.png)
+
 ## Features
 
 - **Color scheme presets:** Things (default), Apple Notes, Bear, Griply and Obsidian, each with light and dark modes. Override the accent, backgrounds, text, borders and highlight independently.
