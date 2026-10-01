@@ -1,0 +1,2980 @@
+/* ==========================================================================
+   Et Cetera
+   Color scheme presets, per-pane elevation, enhanced macOS translucency, a
+   configurable heading system and hover-reveal sidebar chrome.
+   Configure it with Style Settings.
+
+   Layering, lowest to highest:
+     1. Neutral defaults            .theme-light / .theme-dark   (0,1,0)
+     2. Color scheme presets        .theme-*:where(.etc-scheme-*) (0,1,0)
+     3. Option classes              body.etc-*                   (0,1,1)
+     4. Style Settings values       body.css-settings-manager    (0,1,1)+
+   Presets wrap their class in :where() so any Style Settings value beats them.
+   ========================================================================== */
+
+/* @settings
+
+name: Et Cetera
+id: et-cetera
+settings:
+  -
+    id: "etc-intro"
+    title: "Et Cetera"
+    type: "info-text"
+    description: "Pick a base color scheme, then shape panes, transparency, borders and headings. Every *Scheme default* option follows whichever color scheme is active. Use the reset arrow next to any setting to hand it back to the scheme."
+    markdown: true
+  -
+    id: "etc-h-scheme"
+    title: "Color scheme"
+    type: "heading"
+    level: 1
+    collapsed: false
+  -
+    id: "etc-scheme"
+    title: "Base color scheme"
+    description: "Sets surfaces, text, accent, headings, tags and checkboxes in light and dark mode."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-scheme-things"
+    options:
+      - label: "Things"
+        value: "etc-scheme-things"
+      - label: "Apple Notes"
+        value: "etc-scheme-apple-notes"
+      - label: "Bear"
+        value: "etc-scheme-bear"
+      - label: "Griply"
+        value: "etc-scheme-griply"
+      - label: "Obsidian"
+        value: "etc-scheme-obsidian"
+  -
+    id: "etc-h-colors"
+    title: "Color overrides"
+    type: "heading"
+    level: 2
+    collapsed: true
+    description: "Leave untouched to follow the scheme. Reset a color to hand it back."
+  -
+    id: "accent"
+    title: "Accent"
+    description: "Links, checkboxes, selection and accent-tinted UI."
+    type: "variable-themed-color"
+    format: "hsl-split"
+    opacity: false
+    default-light: "#2363b8"
+    default-dark: "#6796e1"
+  -
+    id: "background-primary"
+    title: "Editor background"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#ffffff"
+    default-dark: "#262628"
+  -
+    id: "background-secondary"
+    title: "Sidebar background"
+    description: "Also the window behind elevated panes."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#f9fbfc"
+    default-dark: "#232325"
+  -
+    id: "text-normal"
+    title: "Text"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#161616"
+    default-dark: "#fefefe"
+  -
+    id: "text-muted"
+    title: "Muted text"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#8b8d91"
+    default-dark: "#969696"
+  -
+    id: "background-modifier-border"
+    title: "Content borders"
+    description: "Tables, rules, inputs and other borders inside notes."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#ececec"
+    default-dark: "#414141"
+  -
+    id: "text-highlight-bg"
+    title: "Highlight"
+    description: "Background of ==highlighted== text."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#ffe680"
+    default-dark: "#5c4f14"
+  -
+    id: "etc-h-panes"
+    title: "Panes"
+    type: "heading"
+    level: 1
+    collapsed: true
+  -
+    id: "etc-left-pane"
+    title: "Left sidebar"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-left-flat"
+    options:
+      - label: "Flat"
+        value: "etc-left-flat"
+      - label: "Elevated card"
+        value: "etc-left-elevated"
+  -
+    id: "etc-left-sidebar-color"
+    title: "Left sidebar color"
+    description: "Leave untouched to use the scheme's sidebar color. Text and icons switch between light and dark to stay readable."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#2f3235"
+    default-dark: "#2b2b2d"
+  -
+    id: "etc-main-pane"
+    title: "Main editor area"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-main-flat"
+    options:
+      - label: "Flat"
+        value: "etc-main-flat"
+      - label: "Elevated card"
+        value: "etc-main-elevated"
+  -
+    id: "etc-right-pane"
+    title: "Right sidebar"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-right-flat"
+    options:
+      - label: "Flat"
+        value: "etc-right-flat"
+      - label: "Elevated card"
+        value: "etc-right-elevated"
+  -
+    id: "etc-h-elevation"
+    title: "Elevated cards"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-pane-gap"
+    title: "Gap around cards"
+    type: "variable-number-slider"
+    default: 6
+    min: 0
+    max: 24
+    step: 1
+    format: "px"
+  -
+    id: "etc-pane-radius"
+    title: "Corner radius"
+    type: "variable-number-slider"
+    default: 10
+    min: 0
+    max: 24
+    step: 1
+    format: "px"
+  -
+    id: "etc-pane-shadow-strength"
+    title: "Shadow strength"
+    description: "0 removes the shadow."
+    type: "variable-number-slider"
+    default: 1
+    min: 0
+    max: 4
+    step: 0.25
+  -
+    id: "etc-pane-no-outline"
+    title: "Hide card outline"
+    description: "Cards normally get a hairline in the UI border color."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-window-bg"
+    title: "Window background"
+    description: "Shows in the gaps between cards. Defaults to the sidebar color (a shade darker when the left sidebar is a card)."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#f3f5f7"
+    default-dark: "#1f1f21"
+  -
+    id: "etc-h-glass"
+    title: "Transparency"
+    type: "heading"
+    level: 1
+    collapsed: true
+  -
+    id: "etc-glass-info"
+    title: "Requirement"
+    type: "info-text"
+    description: "Turn on **Settings → Appearance → Translucent window** (macOS). These settings do nothing while it is off."
+    markdown: true
+  -
+    id: "etc-glass"
+    title: "Enhanced transparency"
+    description: "Replaces Obsidian's heavy grey overlay with a light tint so the desktop shows through."
+    type: "class-toggle"
+    default: true
+  -
+    id: "etc-glass-scope"
+    title: "See-through surfaces"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-glass-sidebars"
+    options:
+      - label: "Sidebars only (editor stays solid)"
+        value: "etc-glass-sidebars"
+      - label: "Whole window"
+        value: "etc-glass-all"
+  -
+    id: "etc-glass-opacity-light"
+    title: "Tint strength (light mode)"
+    description: "0 is pure glass, 100 is opaque."
+    type: "variable-number-slider"
+    default: 35
+    min: 0
+    max: 100
+    step: 5
+    format: "%"
+  -
+    id: "etc-glass-opacity-dark"
+    title: "Tint strength (dark mode)"
+    description: "0 is pure glass, 100 is opaque."
+    type: "variable-number-slider"
+    default: 45
+    min: 0
+    max: 100
+    step: 5
+    format: "%"
+  -
+    id: "etc-glass-tint"
+    title: "Tint color"
+    description: "Defaults to the scheme's sidebar color."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#f6f6f8"
+    default-dark: "#1e1e22"
+  -
+    id: "etc-glass-card-opacity"
+    title: "Elevated card opacity"
+    description: "Below 100 lets the glass show through elevated cards."
+    type: "variable-number-slider"
+    default: 100
+    min: 30
+    max: 100
+    step: 5
+    format: "%"
+  -
+    id: "etc-h-borders"
+    title: "UI borders"
+    type: "heading"
+    level: 1
+    collapsed: true
+  -
+    id: "etc-ui-border"
+    title: "UI border color"
+    description: "Pane dividers, header rules, tab bars and card outlines. Defaults to the content border color."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#ececec"
+    default-dark: "#414141"
+  -
+    id: "etc-chrome"
+    title: "Window chrome"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-chrome-borderless"
+    options:
+      - label: "Borderless"
+        value: "etc-chrome-borderless"
+      - label: "Hairlines"
+        value: "etc-chrome-hairline"
+  -
+    id: "etc-view-header-rule"
+    title: "Rule under pane headers"
+    description: "A hairline under note headers and sidebar tab bars."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-show-focus-ring"
+    title: "Show focus ring on text fields"
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-h-type"
+    title: "Typography & layout"
+    type: "heading"
+    level: 1
+    collapsed: true
+  -
+    id: "etc-type-info"
+    title: "Fonts"
+    type: "info-text"
+    description: "Some color schemes set their own fonts. To pick your own use **Settings → Appearance → Font**; those always win over the scheme."
+    markdown: true
+  -
+    id: "file-line-width"
+    title: "Readable line length"
+    type: "variable-number-slider"
+    default: 700
+    min: 480
+    max: 1400
+    step: 10
+    format: "px"
+  -
+    id: "line-height-normal"
+    title: "Line height"
+    type: "variable-number-slider"
+    default: 1.5
+    min: 1.1
+    max: 2.2
+    step: 0.05
+  -
+    id: "p-spacing"
+    title: "Paragraph spacing"
+    type: "variable-number-slider"
+    default: 1
+    min: 0
+    max: 2.5
+    step: 0.125
+    format: "rem"
+  -
+    id: "etc-h-headings"
+    title: "Headings"
+    type: "heading"
+    level: 1
+    collapsed: true
+  -
+    id: "etc-headings-info"
+    title: "How these combine"
+    type: "info-text"
+    description: "General settings apply to every level. A level's own settings below override them. Anything left untouched follows the color scheme."
+    markdown: true
+  -
+    id: "etc-heading-color"
+    title: "Color"
+    description: "One color for all headings."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#161616"
+    default-dark: "#fefefe"
+  -
+    id: "etc-heading-accent"
+    title: "Use the accent color for all headings"
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-heading-scale"
+    title: "Size"
+    description: "Multiplies every heading size."
+    type: "variable-number-slider"
+    default: 1
+    min: 0.7
+    max: 1.6
+    step: 0.05
+  -
+    id: "etc-heading-weight"
+    title: "Weight"
+    type: "variable-select"
+    default: "600"
+    options:
+      - label: "Light (300)"
+        value: "300"
+      - label: "Regular (400)"
+        value: "400"
+      - label: "Medium (500)"
+        value: "500"
+      - label: "Semibold (600)"
+        value: "600"
+      - label: "Bold (700)"
+        value: "700"
+      - label: "Heavy (800)"
+        value: "800"
+      - label: "Black (900)"
+        value: "900"
+  -
+    id: "etc-heading-align"
+    title: "Alignment"
+    type: "variable-select"
+    default: "start"
+    options:
+      - label: "Left"
+        value: "start"
+      - label: "Center"
+        value: "center"
+      - label: "Right"
+        value: "end"
+  -
+    id: "etc-heading-font"
+    title: "Font"
+    type: "variable-select"
+    default: "var(--font-text)"
+    options:
+      - label: "Text font"
+        value: "var(--font-text)"
+      - label: "Interface font"
+        value: "var(--font-interface)"
+      - label: "Monospace"
+        value: "var(--font-monospace)"
+      - label: "Serif"
+        value: "ui-serif, \"New York\", Georgia, serif"
+      - label: "Rounded"
+        value: "ui-rounded, \"SF Pro Rounded\", system-ui, sans-serif"
+  -
+    id: "etc-heading-case"
+    title: "Letter case"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-hcase-none"
+    options:
+      - label: "As typed"
+        value: "etc-hcase-none"
+      - label: "Uppercase"
+        value: "etc-hcase-upper"
+      - label: "Small caps"
+        value: "etc-hcase-smallcaps"
+  -
+    id: "etc-heading-tracking"
+    title: "Letter spacing"
+    type: "variable-number-slider"
+    default: 0
+    min: -0.05
+    max: 0.15
+    step: 0.005
+    format: "em"
+  -
+    id: "etc-heading-line-height"
+    title: "Line height"
+    type: "variable-number-slider"
+    default: 1.2
+    min: 1
+    max: 1.8
+    step: 0.05
+  -
+    id: "heading-spacing"
+    title: "Space above headings"
+    type: "variable-number-slider"
+    default: 2.5
+    min: 0
+    max: 4
+    step: 0.25
+    format: "rem"
+  -
+    id: "etc-h-dividers"
+    title: "Dividers under headings"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-hd"
+    title: "Show dividers under"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-hd-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-hd-scheme"
+      - label: "No headings"
+        value: "etc-hd-none"
+      - label: "H1"
+        value: "etc-hd-h1"
+      - label: "H1 and H2"
+        value: "etc-hd-h1-h2"
+      - label: "H1 to H3"
+        value: "etc-hd-h1-h3"
+      - label: "All headings"
+        value: "etc-hd-all"
+  -
+    id: "etc-heading-divider-color"
+    title: "Divider color"
+    description: "Defaults to the content border color."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#ececec"
+    default-dark: "#414141"
+  -
+    id: "etc-heading-divider-width"
+    title: "Divider thickness"
+    type: "variable-number-slider"
+    default: 1
+    min: 0.5
+    max: 4
+    step: 0.5
+    format: "px"
+  -
+    id: "etc-heading-divider-style"
+    title: "Divider style"
+    type: "variable-select"
+    default: "solid"
+    options:
+      - label: "Solid"
+        value: "solid"
+      - label: "Dashed"
+        value: "dashed"
+      - label: "Dotted"
+        value: "dotted"
+      - label: "Double"
+        value: "double"
+  -
+    id: "etc-heading-divider-gap"
+    title: "Space between heading and divider"
+    type: "variable-number-slider"
+    default: 0.3
+    min: 0
+    max: 1
+    step: 0.05
+    format: "em"
+  -
+    id: "etc-inline-title-divider"
+    title: "Divider under the note title"
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-h-title"
+    title: "Note title"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "inline-title-color"
+    title: "Color"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#161616"
+    default-dark: "#fefefe"
+  -
+    id: "inline-title-size"
+    title: "Size"
+    type: "variable-number-slider"
+    default: 1.618
+    min: 0.8
+    max: 3
+    step: 0.025
+    format: "em"
+  -
+    id: "inline-title-weight"
+    title: "Weight"
+    type: "variable-select"
+    default: "700"
+    options:
+      - label: "Light (300)"
+        value: "300"
+      - label: "Regular (400)"
+        value: "400"
+      - label: "Medium (500)"
+        value: "500"
+      - label: "Semibold (600)"
+        value: "600"
+      - label: "Bold (700)"
+        value: "700"
+      - label: "Heavy (800)"
+        value: "800"
+      - label: "Black (900)"
+        value: "900"
+  -
+    id: "etc-inline-title-align"
+    title: "Alignment"
+    type: "variable-select"
+    default: "start"
+    options:
+      - label: "Left"
+        value: "start"
+      - label: "Center"
+        value: "center"
+      - label: "Right"
+        value: "end"
+  -
+    id: "etc-h-h1"
+    title: "H1"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-h1-color"
+    title: "Color"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#161616"
+    default-dark: "#fefefe"
+  -
+    id: "etc-h1-size"
+    title: "Size"
+    type: "variable-number-slider"
+    default: 1.618
+    min: 0.7
+    max: 3
+    step: 0.025
+    format: "em"
+  -
+    id: "etc-h1-weight"
+    title: "Weight"
+    type: "variable-select"
+    default: "700"
+    options:
+      - label: "Light (300)"
+        value: "300"
+      - label: "Regular (400)"
+        value: "400"
+      - label: "Medium (500)"
+        value: "500"
+      - label: "Semibold (600)"
+        value: "600"
+      - label: "Bold (700)"
+        value: "700"
+      - label: "Heavy (800)"
+        value: "800"
+      - label: "Black (900)"
+        value: "900"
+  -
+    id: "etc-h1-divider"
+    title: "Divider"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h1-divider-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h1-divider-inherit"
+      - label: "Show"
+        value: "etc-h1-divider-show"
+      - label: "Hide"
+        value: "etc-h1-divider-hide"
+  -
+    id: "etc-h1-align"
+    title: "Alignment"
+    type: "variable-select"
+    default: "start"
+    options:
+      - label: "Left"
+        value: "start"
+      - label: "Center"
+        value: "center"
+      - label: "Right"
+        value: "end"
+  -
+    id: "etc-h1-case"
+    title: "Letter case"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h1-case-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h1-case-inherit"
+      - label: "As typed"
+        value: "etc-h1-case-none"
+      - label: "Uppercase"
+        value: "etc-h1-case-upper"
+      - label: "Small caps"
+        value: "etc-h1-case-smallcaps"
+  -
+    id: "h1-style"
+    title: "Style"
+    type: "variable-select"
+    default: "normal"
+    options:
+      - label: "Normal"
+        value: "normal"
+      - label: "Italic"
+        value: "italic"
+  -
+    id: "etc-h-h2"
+    title: "H2"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-h2-color"
+    title: "Color"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#161616"
+    default-dark: "#fefefe"
+  -
+    id: "etc-h2-size"
+    title: "Size"
+    type: "variable-number-slider"
+    default: 1.462
+    min: 0.7
+    max: 3
+    step: 0.025
+    format: "em"
+  -
+    id: "etc-h2-weight"
+    title: "Weight"
+    type: "variable-select"
+    default: "600"
+    options:
+      - label: "Light (300)"
+        value: "300"
+      - label: "Regular (400)"
+        value: "400"
+      - label: "Medium (500)"
+        value: "500"
+      - label: "Semibold (600)"
+        value: "600"
+      - label: "Bold (700)"
+        value: "700"
+      - label: "Heavy (800)"
+        value: "800"
+      - label: "Black (900)"
+        value: "900"
+  -
+    id: "etc-h2-divider"
+    title: "Divider"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h2-divider-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h2-divider-inherit"
+      - label: "Show"
+        value: "etc-h2-divider-show"
+      - label: "Hide"
+        value: "etc-h2-divider-hide"
+  -
+    id: "etc-h2-align"
+    title: "Alignment"
+    type: "variable-select"
+    default: "start"
+    options:
+      - label: "Left"
+        value: "start"
+      - label: "Center"
+        value: "center"
+      - label: "Right"
+        value: "end"
+  -
+    id: "etc-h2-case"
+    title: "Letter case"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h2-case-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h2-case-inherit"
+      - label: "As typed"
+        value: "etc-h2-case-none"
+      - label: "Uppercase"
+        value: "etc-h2-case-upper"
+      - label: "Small caps"
+        value: "etc-h2-case-smallcaps"
+  -
+    id: "h2-style"
+    title: "Style"
+    type: "variable-select"
+    default: "normal"
+    options:
+      - label: "Normal"
+        value: "normal"
+      - label: "Italic"
+        value: "italic"
+  -
+    id: "etc-h-h3"
+    title: "H3"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-h3-color"
+    title: "Color"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#161616"
+    default-dark: "#fefefe"
+  -
+    id: "etc-h3-size"
+    title: "Size"
+    type: "variable-number-slider"
+    default: 1.318
+    min: 0.7
+    max: 3
+    step: 0.025
+    format: "em"
+  -
+    id: "etc-h3-weight"
+    title: "Weight"
+    type: "variable-select"
+    default: "600"
+    options:
+      - label: "Light (300)"
+        value: "300"
+      - label: "Regular (400)"
+        value: "400"
+      - label: "Medium (500)"
+        value: "500"
+      - label: "Semibold (600)"
+        value: "600"
+      - label: "Bold (700)"
+        value: "700"
+      - label: "Heavy (800)"
+        value: "800"
+      - label: "Black (900)"
+        value: "900"
+  -
+    id: "etc-h3-divider"
+    title: "Divider"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h3-divider-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h3-divider-inherit"
+      - label: "Show"
+        value: "etc-h3-divider-show"
+      - label: "Hide"
+        value: "etc-h3-divider-hide"
+  -
+    id: "etc-h3-align"
+    title: "Alignment"
+    type: "variable-select"
+    default: "start"
+    options:
+      - label: "Left"
+        value: "start"
+      - label: "Center"
+        value: "center"
+      - label: "Right"
+        value: "end"
+  -
+    id: "etc-h3-case"
+    title: "Letter case"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h3-case-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h3-case-inherit"
+      - label: "As typed"
+        value: "etc-h3-case-none"
+      - label: "Uppercase"
+        value: "etc-h3-case-upper"
+      - label: "Small caps"
+        value: "etc-h3-case-smallcaps"
+  -
+    id: "h3-style"
+    title: "Style"
+    type: "variable-select"
+    default: "normal"
+    options:
+      - label: "Normal"
+        value: "normal"
+      - label: "Italic"
+        value: "italic"
+  -
+    id: "etc-h-h4"
+    title: "H4"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-h4-color"
+    title: "Color"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#161616"
+    default-dark: "#fefefe"
+  -
+    id: "etc-h4-size"
+    title: "Size"
+    type: "variable-number-slider"
+    default: 1.188
+    min: 0.7
+    max: 3
+    step: 0.025
+    format: "em"
+  -
+    id: "etc-h4-weight"
+    title: "Weight"
+    type: "variable-select"
+    default: "600"
+    options:
+      - label: "Light (300)"
+        value: "300"
+      - label: "Regular (400)"
+        value: "400"
+      - label: "Medium (500)"
+        value: "500"
+      - label: "Semibold (600)"
+        value: "600"
+      - label: "Bold (700)"
+        value: "700"
+      - label: "Heavy (800)"
+        value: "800"
+      - label: "Black (900)"
+        value: "900"
+  -
+    id: "etc-h4-divider"
+    title: "Divider"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h4-divider-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h4-divider-inherit"
+      - label: "Show"
+        value: "etc-h4-divider-show"
+      - label: "Hide"
+        value: "etc-h4-divider-hide"
+  -
+    id: "etc-h4-align"
+    title: "Alignment"
+    type: "variable-select"
+    default: "start"
+    options:
+      - label: "Left"
+        value: "start"
+      - label: "Center"
+        value: "center"
+      - label: "Right"
+        value: "end"
+  -
+    id: "etc-h4-case"
+    title: "Letter case"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h4-case-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h4-case-inherit"
+      - label: "As typed"
+        value: "etc-h4-case-none"
+      - label: "Uppercase"
+        value: "etc-h4-case-upper"
+      - label: "Small caps"
+        value: "etc-h4-case-smallcaps"
+  -
+    id: "h4-style"
+    title: "Style"
+    type: "variable-select"
+    default: "normal"
+    options:
+      - label: "Normal"
+        value: "normal"
+      - label: "Italic"
+        value: "italic"
+  -
+    id: "etc-h-h5"
+    title: "H5"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-h5-color"
+    title: "Color"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#161616"
+    default-dark: "#fefefe"
+  -
+    id: "etc-h5-size"
+    title: "Size"
+    type: "variable-number-slider"
+    default: 1.076
+    min: 0.7
+    max: 3
+    step: 0.025
+    format: "em"
+  -
+    id: "etc-h5-weight"
+    title: "Weight"
+    type: "variable-select"
+    default: "600"
+    options:
+      - label: "Light (300)"
+        value: "300"
+      - label: "Regular (400)"
+        value: "400"
+      - label: "Medium (500)"
+        value: "500"
+      - label: "Semibold (600)"
+        value: "600"
+      - label: "Bold (700)"
+        value: "700"
+      - label: "Heavy (800)"
+        value: "800"
+      - label: "Black (900)"
+        value: "900"
+  -
+    id: "etc-h5-divider"
+    title: "Divider"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h5-divider-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h5-divider-inherit"
+      - label: "Show"
+        value: "etc-h5-divider-show"
+      - label: "Hide"
+        value: "etc-h5-divider-hide"
+  -
+    id: "etc-h5-align"
+    title: "Alignment"
+    type: "variable-select"
+    default: "start"
+    options:
+      - label: "Left"
+        value: "start"
+      - label: "Center"
+        value: "center"
+      - label: "Right"
+        value: "end"
+  -
+    id: "etc-h5-case"
+    title: "Letter case"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h5-case-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h5-case-inherit"
+      - label: "As typed"
+        value: "etc-h5-case-none"
+      - label: "Uppercase"
+        value: "etc-h5-case-upper"
+      - label: "Small caps"
+        value: "etc-h5-case-smallcaps"
+  -
+    id: "h5-style"
+    title: "Style"
+    type: "variable-select"
+    default: "normal"
+    options:
+      - label: "Normal"
+        value: "normal"
+      - label: "Italic"
+        value: "italic"
+  -
+    id: "etc-h-h6"
+    title: "H6"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-h6-color"
+    title: "Color"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#161616"
+    default-dark: "#fefefe"
+  -
+    id: "etc-h6-size"
+    title: "Size"
+    type: "variable-number-slider"
+    default: 1.0
+    min: 0.7
+    max: 3
+    step: 0.025
+    format: "em"
+  -
+    id: "etc-h6-weight"
+    title: "Weight"
+    type: "variable-select"
+    default: "600"
+    options:
+      - label: "Light (300)"
+        value: "300"
+      - label: "Regular (400)"
+        value: "400"
+      - label: "Medium (500)"
+        value: "500"
+      - label: "Semibold (600)"
+        value: "600"
+      - label: "Bold (700)"
+        value: "700"
+      - label: "Heavy (800)"
+        value: "800"
+      - label: "Black (900)"
+        value: "900"
+  -
+    id: "etc-h6-divider"
+    title: "Divider"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h6-divider-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h6-divider-inherit"
+      - label: "Show"
+        value: "etc-h6-divider-show"
+      - label: "Hide"
+        value: "etc-h6-divider-hide"
+  -
+    id: "etc-h6-align"
+    title: "Alignment"
+    type: "variable-select"
+    default: "start"
+    options:
+      - label: "Left"
+        value: "start"
+      - label: "Center"
+        value: "center"
+      - label: "Right"
+        value: "end"
+  -
+    id: "etc-h6-case"
+    title: "Letter case"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-h6-case-inherit"
+    options:
+      - label: "Follow general setting"
+        value: "etc-h6-case-inherit"
+      - label: "As typed"
+        value: "etc-h6-case-none"
+      - label: "Uppercase"
+        value: "etc-h6-case-upper"
+      - label: "Small caps"
+        value: "etc-h6-case-smallcaps"
+  -
+    id: "h6-style"
+    title: "Style"
+    type: "variable-select"
+    default: "normal"
+    options:
+      - label: "Normal"
+        value: "normal"
+      - label: "Italic"
+        value: "italic"
+  -
+    id: "etc-h-editor"
+    title: "Editor details"
+    type: "heading"
+    level: 1
+    collapsed: true
+  -
+    id: "etc-checkbox"
+    title: "Checkbox shape"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-checkbox-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-checkbox-scheme"
+      - label: "Circle"
+        value: "etc-checkbox-round"
+      - label: "Rounded square"
+        value: "etc-checkbox-rounded"
+      - label: "Square"
+        value: "etc-checkbox-square"
+  -
+    id: "etc-done"
+    title: "Completed tasks"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-done-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-done-scheme"
+      - label: "Strike through"
+        value: "etc-done-strike"
+      - label: "Fade out"
+        value: "etc-done-faded"
+      - label: "Leave as is"
+        value: "etc-done-plain"
+  -
+    id: "etc-no-priority"
+    title: "Plain priority checkboxes"
+    description: "By default [!] tasks get a red checkbox and [>] / [<] an orange one."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-tags"
+    title: "Tags"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-tags-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-tags-scheme"
+      - label: "Filled pill"
+        value: "etc-tags-pill"
+      - label: "Outlined"
+        value: "etc-tags-outlined"
+      - label: "Plain text"
+        value: "etc-tags-plain"
+  -
+    id: "etc-links"
+    title: "Links"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-links-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-links-scheme"
+      - label: "Underlined"
+        value: "etc-links-underline"
+      - label: "No underline"
+        value: "etc-links-plain"
+  -
+    id: "etc-bullets"
+    title: "Nested bullets"
+    description: "Hollow draws every other nested level as an outlined circle."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-bullets-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-bullets-scheme"
+      - label: "Hollow"
+        value: "etc-bullets-hollow"
+      - label: "Filled"
+        value: "etc-bullets-filled"
+  -
+    id: "etc-h-sidebar"
+    title: "Sidebar & menus"
+    type: "heading"
+    level: 1
+    collapsed: true
+  -
+    id: "nav-item-radius"
+    title: "Selection corner radius"
+    type: "variable-number-slider"
+    default: 6
+    min: 0
+    max: 14
+    step: 1
+    format: "px"
+  -
+    id: "nav-item-weight-active"
+    title: "Active file weight"
+    type: "variable-select"
+    default: "400"
+    options:
+      - label: "Regular"
+        value: "400"
+      - label: "Medium"
+        value: "500"
+      - label: "Semibold"
+        value: "600"
+      - label: "Bold"
+        value: "700"
+  -
+    id: "etc-folder-icons"
+    title: "Folder icons"
+    description: "An accent-colored folder glyph before each folder name."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-folder-icons-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-folder-icons-scheme"
+      - label: "Show"
+        value: "etc-folder-icons-on"
+      - label: "Hide"
+        value: "etc-folder-icons-off"
+  -
+    id: "etc-menu"
+    title: "Selected row in menus and pickers"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-menu-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-menu-scheme"
+      - label: "Accent tint"
+        value: "etc-menu-accent"
+      - label: "Grey"
+        value: "etc-menu-grey"
+  -
+    id: "etc-h-toolbar"
+    title: "Hover to reveal"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-toolbar-always"
+    title: "Always show sidebar toolbars"
+    description: "By default each sidebar toolbar shrinks to a faint ellipsis until hovered."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-vault-bar"
+    title: "Vault, Help and Settings bar"
+    description: "The bar at the bottom of the left sidebar."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-vault-bar-show"
+    options:
+      - label: "Always show"
+        value: "etc-vault-bar-show"
+      - label: "Fade in on hover"
+        value: "etc-vault-bar-fade"
+      - label: "Collapse until hovered"
+        value: "etc-vault-bar-collapse"
+  -
+    id: "etc-reveal-ribbon"
+    title: "Ribbon: reveal on hover"
+    description: "The ribbon tucks away to a slim edge and slides out on hover. The ribbon must be turned on in Settings → Appearance."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-reveal-left"
+    title: "Left sidebar: reveal on hover"
+    description: "While open, the left sidebar tucks away to a slim edge and slides out over the editor on hover."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-reveal-right"
+    title: "Right sidebar: reveal on hover"
+    description: "While open, the right sidebar tucks away to a slim edge and slides out over the editor on hover."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-reveal-strip"
+    title: "Edge width"
+    description: "The hover edge left showing for the ribbon and sidebars."
+    type: "variable-number-slider"
+    default: 8
+    min: 2
+    max: 24
+    step: 1
+    format: "px"
+  -
+    id: "etc-toolbar-glyph"
+    title: "Collapsed glyph"
+    type: "variable-text"
+    default: "⋯"
+    quotes: true
+  -
+    id: "etc-toolbar-height"
+    title: "Collapsed height"
+    type: "variable-number-slider"
+    default: 14
+    min: 6
+    max: 30
+    step: 1
+    format: "px"
+  -
+    id: "etc-toolbar-duration"
+    title: "Animation duration"
+    type: "variable-number-slider"
+    default: 240
+    min: 0
+    max: 800
+    step: 20
+    format: "ms"
+  -
+    id: "etc-toolbar-close-delay"
+    title: "Close delay"
+    type: "variable-number-slider"
+    default: 150
+    min: 0
+    max: 1000
+    step: 25
+    format: "ms"
+*/
+
+/* ---------- 1. Neutral defaults ---------- */
+body {
+  --etc-heading-scale: 1;
+  --etc-heading-divider-width: 1px;
+  --etc-heading-divider-style: solid;
+  --etc-heading-divider-gap: 0.3em;
+  --etc-pane-gap: 6px;
+  --etc-pane-radius: 10px;
+  --etc-pane-shadow-strength: 1;
+  --etc-card-outline-width: 1px;
+  --etc-glass-opacity-light: 35%;
+  --etc-glass-opacity-dark: 45%;
+  --etc-glass-card-opacity: 100%;
+  --etc-toolbar-glyph: "⋯";
+  --etc-toolbar-color: var(--text-faint);
+  --etc-toolbar-size: 24px;
+  --etc-toolbar-height: 14px;
+  --etc-toolbar-open-height: 40px;
+  --etc-vault-bar-open-height: 64px;
+  --etc-toolbar-duration: 240ms;
+  --etc-toolbar-close-delay: 150ms;
+  --etc-toolbar-ease: cubic-bezier(0.2, 0, 0, 1);
+  --etc-reveal-strip: 8px;
+  --etc-ribbon-footprint: var(--ribbon-width);
+}
+
+:is(.theme-light, .theme-dark) {
+  --etc-p-h1-size: 1.618em;
+  --etc-p-h1-weight: 700;
+  --etc-p-h1-tracking: -0.015em;
+  --etc-p-h1-divider: 0;
+  --etc-p-h1-color: var(--text-normal);
+  --etc-p-h2-size: 1.462em;
+  --etc-p-h2-weight: 680;
+  --etc-p-h2-tracking: -0.011em;
+  --etc-p-h2-divider: 0;
+  --etc-p-h2-color: var(--text-normal);
+  --etc-p-h3-size: 1.318em;
+  --etc-p-h3-weight: 660;
+  --etc-p-h3-tracking: -0.008em;
+  --etc-p-h3-divider: 0;
+  --etc-p-h3-color: var(--text-normal);
+  --etc-p-h4-size: 1.188em;
+  --etc-p-h4-weight: 640;
+  --etc-p-h4-tracking: -0.005em;
+  --etc-p-h4-divider: 0;
+  --etc-p-h4-color: var(--text-normal);
+  --etc-p-h5-size: 1.076em;
+  --etc-p-h5-weight: 620;
+  --etc-p-h5-tracking: -0.002em;
+  --etc-p-h5-divider: 0;
+  --etc-p-h5-color: var(--text-normal);
+  --etc-p-h6-size: 1em;
+  --etc-p-h6-weight: 600;
+  --etc-p-h6-tracking: 0em;
+  --etc-p-h6-divider: 0;
+  --etc-p-h6-color: var(--text-normal);
+  --etc-p-h1-line-height: 1.2;
+  --etc-p-h2-line-height: 1.2;
+  --etc-p-h3-line-height: 1.3;
+  --etc-p-h4-line-height: 1.4;
+  --etc-p-h5-line-height: var(--line-height-normal);
+  --etc-p-h6-line-height: var(--line-height-normal);
+  --etc-p-menu-selection: var(--background-modifier-hover);
+  --etc-heading-divider-color: var(--background-modifier-border);
+  --etc-glass-tint: var(--background-secondary);
+  --etc-window-bg: var(--background-secondary);
+  --nav-item-radius: 6px;
+}
+.theme-light {
+  --etc-reveal-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 10px 32px rgba(0, 0, 0, 0.14);
+  --etc-accent-hover: hsl(var(--accent-h), var(--accent-s), calc(var(--accent-l) * 0.85));
+  --etc-pane-shadow: 0 1px 3px rgba(0, 0, 0, calc(0.05 * var(--etc-pane-shadow-strength))),
+    0 6px 20px rgba(0, 0, 0, calc(0.03 * var(--etc-pane-shadow-strength)));
+}
+.theme-dark {
+  --etc-reveal-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 10px 32px rgba(0, 0, 0, 0.5);
+  --etc-accent-hover: hsl(var(--accent-h), var(--accent-s), calc(var(--accent-l) * 1.15));
+  --etc-pane-shadow: 0 1px 2px rgba(0, 0, 0, calc(0.3 * var(--etc-pane-shadow-strength))),
+    0 6px 20px rgba(0, 0, 0, calc(0.18 * var(--etc-pane-shadow-strength)));
+}
+
+/* ==========================================================================
+   2. Color schemes
+   ========================================================================== */
+
+/* ---------- Things (default: active whenever no other scheme is) ---------- */
+:is(.theme-light, .theme-dark):where(:not(.etc-scheme-apple-notes, .etc-scheme-bear, .etc-scheme-griply, .etc-scheme-obsidian)) {
+  --color-red-rgb: 232, 36, 93;
+  --color-red: #e8245d;
+  --color-orange-rgb: 245, 145, 50;
+  --color-orange: #f59132;
+  --color-yellow-rgb: 255, 209, 0;
+  --color-yellow: #ffd100;
+  --color-green-rgb: 70, 188, 94;
+  --color-green: #46bc5e;
+  --color-cyan-rgb: 76, 179, 167;
+  --color-cyan: #4cb3a7;
+  --color-blue-rgb: 29, 175, 255;
+  --color-blue: #1dafff;
+  --color-purple-rgb: 160, 128, 230;
+  --color-purple: #a080e6;
+  --color-pink-rgb: 232, 36, 93;
+  --color-pink: #e8245d;
+
+  --titlebar-background: var(--background-secondary);
+  --ribbon-background: var(--background-secondary);
+  --tab-container-background: var(--background-secondary);
+  --status-bar-background: var(--background-secondary);
+  --hr-color: var(--background-modifier-border);
+  --blockquote-border-color: var(--color-accent);
+  --inline-title-color: var(--text-normal);
+
+  --checkbox-radius: 4px;
+  --checklist-done-decoration: line-through;
+  --checklist-done-color: var(--text-muted);
+  --tag-radius: 999px;
+  --tag-weight: 500;
+  --tag-border-color: transparent;
+  --link-decoration: underline;
+  --link-external-decoration: underline;
+  --nav-item-radius: 6px;
+  --etc-p-menu-selection: var(--background-modifier-active-hover);
+  --etc-p-h1-weight: 700;
+  --etc-p-h1-divider: 1;
+}
+.theme-light:where(:not(.etc-scheme-apple-notes, .etc-scheme-bear, .etc-scheme-griply, .etc-scheme-obsidian)) {
+  --accent-h: 214;
+  --accent-s: 68%;
+  --accent-l: 43%;
+
+  --background-primary: #ffffff;
+  --background-primary-alt: #fafafa;
+  --background-secondary: #f9fbfc;
+  --background-secondary-alt: #f3f5f7;
+  --background-modifier-border: #ececec;
+  --background-modifier-border-hover: #e0e0e0;
+  --background-modifier-border-focus: #d0d0d0;
+  --background-modifier-hover: rgba(0, 0, 0, 0.04);
+  --background-modifier-active-hover: hsl(var(--accent-h), 100%, 90%);
+  --background-modifier-form-field: #ffffff;
+
+  --text-normal: #161616;
+  --text-muted: #8b8d91;
+  --text-faint: #b1b3b2;
+  --text-selection: hsl(var(--accent-h), 100%, 90%);
+  --text-highlight-bg: rgba(254, 209, 0, 0.3);
+
+  --interactive-normal: #f3f3f4;
+  --interactive-hover: #e8eaee;
+
+  --nav-item-color: #3b3b3d;
+  --nav-item-color-hover: #161616;
+  --nav-item-color-active: #161616;
+  --nav-item-background-hover: rgba(0, 0, 0, 0.04);
+  --nav-item-background-active: #e8eaee;
+  --nav-item-background-selected: #e8eaee;
+
+  --checkbox-border-color: #c4c4c4;
+  --checkbox-border-color-hover: #a9adb0;
+  --checkbox-marker-color: #ffffff;
+
+  --tag-background: #c4e1d3;
+  --tag-background-hover: #b6d9c8;
+  --tag-color: #2b7457;
+  --tag-color-hover: #2b7457;
+
+  --code-background: #fafafa;
+  --etc-p-h1-color: var(--color-accent);
+  --etc-p-h2-color: #0d0c0f;
+  --etc-p-h3-color: #161616;
+  --etc-p-h4-color: #3b3b3d;
+  --etc-p-h5-color: #8b8d91;
+  --etc-p-h6-color: #8b8d91;
+}
+.theme-dark:where(:not(.etc-scheme-apple-notes, .etc-scheme-bear, .etc-scheme-griply, .etc-scheme-obsidian)) {
+  --accent-h: 217;
+  --accent-s: 67%;
+  --accent-l: 64%;
+
+  --background-primary: #262628;
+  --background-primary-alt: #2b2b2d;
+  --background-secondary: #232325;
+  --background-secondary-alt: #1f1f21;
+  --background-modifier-border: #414141;
+  --background-modifier-border-hover: #4d4d4d;
+  --background-modifier-border-focus: #5a5a5a;
+  --background-modifier-hover: rgba(255, 255, 255, 0.06);
+  --background-modifier-active-hover: hsl(var(--accent-h), 54%, 30%);
+  --background-modifier-form-field: #2e2e2e;
+
+  --text-normal: #fefefe;
+  --text-muted: #969696;
+  --text-faint: #6e6e6e;
+  --text-selection: hsl(var(--accent-h), 54%, 30%);
+  --text-highlight-bg: rgba(255, 209, 0, 0.25);
+
+  --interactive-normal: #333333;
+  --interactive-hover: #3a3a3a;
+
+  --nav-item-color: #d4d4d4;
+  --nav-item-color-hover: #fefefe;
+  --nav-item-color-active: #fefefe;
+  --nav-item-background-hover: rgba(255, 255, 255, 0.05);
+  --nav-item-background-active: #3a3c3f;
+  --nav-item-background-selected: #3a3c3f;
+
+  --checkbox-border-color: #686868;
+  --checkbox-border-color-hover: #8c8c8c;
+  --checkbox-marker-color: #262628;
+
+  --tag-background: #2c6b51;
+  --tag-background-hover: #317a5c;
+  --tag-color: #ffffff;
+  --tag-color-hover: #ffffff;
+
+  --code-background: #232325;
+  --etc-p-h1-color: var(--color-accent);
+  --etc-p-h2-color: #ffffff;
+  --etc-p-h3-color: #fefefe;
+  --etc-p-h4-color: #d4d4d4;
+  --etc-p-h5-color: #969696;
+  --etc-p-h6-color: #969696;
+}
+
+/* ---------- Apple Notes ---------- */
+:is(.theme-light, .theme-dark):where(.etc-scheme-apple-notes) {
+  --color-red-rgb: 255, 59, 48;
+  --color-red: #ff3b30;
+  --color-orange-rgb: 255, 149, 0;
+  --color-orange: #ff9500;
+  --color-yellow-rgb: 255, 204, 0;
+  --color-yellow: #ffcc00;
+  --color-green-rgb: 52, 199, 89;
+  --color-green: #34c759;
+  --color-cyan-rgb: 50, 173, 230;
+  --color-cyan: #32ade6;
+  --color-blue-rgb: 0, 122, 255;
+  --color-blue: #007aff;
+  --color-purple-rgb: 175, 82, 222;
+  --color-purple: #af52de;
+  --color-pink-rgb: 255, 45, 85;
+  --color-pink: #ff2d55;
+
+  --font-interface-theme: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  --font-text-theme: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  --font-monospace-theme: "SF Mono", ui-monospace, Menlo, monospace;
+  --line-height-normal: 1.4;
+
+  --titlebar-background: var(--background-secondary);
+  --ribbon-background: var(--background-secondary);
+  --tab-container-background: var(--background-secondary);
+  --status-bar-background: var(--background-secondary);
+
+  --inline-title-size: 1.75em;
+  --inline-title-weight: 700;
+  --heading-spacing: 1em;
+  --bold-weight: 700;
+  --etc-p-h1-size: 1.6em;
+  --etc-p-h1-weight: 700;
+  --etc-p-h2-size: 1.3em;
+  --etc-p-h2-weight: 700;
+  --etc-p-h3-size: 1.1em;
+  --etc-p-h3-weight: 600;
+  --etc-p-h4-size: 1em;
+  --etc-p-h4-weight: 600;
+  --etc-p-h5-size: 1em;
+  --etc-p-h5-weight: 600;
+  --etc-p-h6-size: 0.9em;
+  --etc-p-h6-weight: 600;
+
+  --checkbox-radius: 50%;
+  --checkbox-size: 1.1em;
+  --checklist-done-decoration: none;
+  --checklist-done-color: var(--text-normal);
+  --list-bullet-size: 0.3em;
+  --list-indent: 1.75em;
+
+  --blockquote-border-thickness: 3px;
+  --blockquote-background-color: transparent;
+  --blockquote-font-style: normal;
+  --blockquote-color: var(--text-normal);
+
+  --table-border-width: 1px;
+  --table-header-background: transparent;
+  --table-header-background-hover: transparent;
+  --table-header-weight: var(--font-weight);
+  --table-header-color: var(--text-normal);
+  --table-row-alt-background: transparent;
+  --table-row-background-hover: transparent;
+  --table-text-size: 1em;
+
+  --link-decoration: underline;
+  --link-external-decoration: underline;
+  --tag-background: transparent;
+  --tag-background-hover: transparent;
+  --tag-border-color: transparent;
+  --tag-color: var(--text-accent);
+  --tag-color-hover: var(--text-accent-hover);
+  --tag-padding-x: 0;
+
+  --code-normal: var(--text-normal);
+  --code-size: 0.92em;
+  --code-radius: 4px;
+
+  --nav-item-radius: 8px;
+  --nav-item-weight-active: 600;
+  --etc-p-menu-selection: var(--nav-item-background-active);
+}
+.theme-light:where(.etc-scheme-apple-notes) {
+  --accent-h: 211;
+  --accent-s: 100%;
+  --accent-l: 50%;
+
+  --background-primary: #ffffff;
+  --background-primary-alt: #fafafa;
+  --background-secondary: #f7f7f7;
+  --background-secondary-alt: #f0f0f0;
+  --background-modifier-border: #ebebeb;
+  --background-modifier-border-hover: #dcdcdc;
+  --background-modifier-border-focus: #cccccc;
+  --background-modifier-hover: rgba(0, 0, 0, 0.04);
+  --background-modifier-active-hover: #e0e0e0;
+  --background-modifier-form-field: #ffffff;
+
+  --text-normal: #484848;
+  --text-muted: #8c8c8c;
+  --text-faint: #a8a8a8;
+  --text-selection: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.2);
+  --text-highlight-bg: rgba(255, 204, 0, 0.35);
+
+  --interactive-normal: #ffffff;
+  --interactive-hover: #f0f0f0;
+  --hr-color: #e0e0e0;
+
+  --nav-item-color: #1d1d1d;
+  --nav-item-color-hover: #000000;
+  --nav-item-color-active: #000000;
+  --nav-item-background-hover: rgba(0, 0, 0, 0.04);
+  --nav-item-background-active: #e0e0e0;
+  --nav-item-background-selected: #dcdcdc;
+
+  --checkbox-border-color: #bfbfbf;
+  --checkbox-border-color-hover: #a0a0a0;
+  --checkbox-marker-color: #ffffff;
+
+  --table-border-color: #cccccc;
+  --blockquote-border-color: #bbbbbb;
+  --code-background: #f5f5f5;
+  --list-marker-color: #414141;
+  --inline-title-color: #3e3e3e;
+  --etc-p-h1-color: #3e3e3e;
+  --etc-p-h2-color: #3e3e3e;
+  --etc-p-h3-color: #3e3e3e;
+  --etc-p-h4-color: #484848;
+  --etc-p-h5-color: #484848;
+  --etc-p-h6-color: #8c8c8c;
+}
+.theme-dark:where(.etc-scheme-apple-notes) {
+  --accent-h: 210;
+  --accent-s: 100%;
+  --accent-l: 52%;
+
+  --background-primary: #1e1e1e;
+  --background-primary-alt: #232323;
+  --background-secondary: #262626;
+  --background-secondary-alt: #1a1a1a;
+  --background-modifier-border: #2e2e2e;
+  --background-modifier-border-hover: #3d3d3d;
+  --background-modifier-border-focus: #4a4a4a;
+  --background-modifier-hover: rgba(255, 255, 255, 0.05);
+  --background-modifier-active-hover: #3a3a3a;
+  --background-modifier-form-field: #2a2a2a;
+
+  --text-normal: #dcdcdc;
+  --text-muted: #8e8e8e;
+  --text-faint: #6a6a6a;
+  --text-selection: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.3);
+  --text-highlight-bg: rgba(255, 214, 10, 0.3);
+
+  --interactive-normal: #2e2e2e;
+  --interactive-hover: #383838;
+  --hr-color: #3a3a3a;
+
+  --nav-item-color: #e0e0e0;
+  --nav-item-color-hover: #ffffff;
+  --nav-item-color-active: #ffffff;
+  --nav-item-background-hover: rgba(255, 255, 255, 0.05);
+  --nav-item-background-active: #3a3a3a;
+  --nav-item-background-selected: #404040;
+
+  --checkbox-border-color: #6a6a6a;
+  --checkbox-border-color-hover: #8a8a8a;
+  --checkbox-marker-color: #ffffff;
+
+  --table-border-color: #555555;
+  --blockquote-border-color: #666666;
+  --code-background: #262626;
+  --list-marker-color: #c8c8c8;
+  --inline-title-color: #ececec;
+  --etc-p-h1-color: #ececec;
+  --etc-p-h2-color: #ececec;
+  --etc-p-h3-color: #ececec;
+  --etc-p-h4-color: #dcdcdc;
+  --etc-p-h5-color: #dcdcdc;
+  --etc-p-h6-color: #8e8e8e;
+}
+
+/* ---------- Bear ---------- */
+:is(.theme-light, .theme-dark):where(.etc-scheme-bear) {
+  --font-text-theme: "Bear Sans UI", "Avenir Next", "Avenir", -apple-system, "SF Pro Text", sans-serif;
+  --font-interface-theme: "Bear Sans UI", "Avenir Next", "Avenir", -apple-system, "SF Pro Text", sans-serif;
+  --font-monospace-theme: "SF Mono", Menlo, Monaco, monospace;
+
+  --file-line-width: 720px;
+  --line-height-normal: 1.75;
+  --p-spacing: 1em;
+
+  --titlebar-background: var(--background-primary);
+  --ribbon-background: var(--background-secondary);
+  --tab-container-background: var(--background-primary);
+  --status-bar-background: var(--background-primary);
+
+  --link-decoration: none;
+  --link-external-decoration: none;
+  --link-unresolved-decoration-style: dotted;
+
+  --tag-radius: 999px;
+  --tag-padding-x: 0.65em;
+  --tag-padding-y: 0.15em;
+  --tag-decoration: none;
+  --tag-weight: 500;
+  --tag-border-color: transparent;
+
+  --hr-thickness: 1px;
+  --list-bullet-size: 6px;
+  --checkbox-radius: 5px;
+  --checklist-done-decoration: none;
+  --checklist-done-color: var(--text-faint);
+  --blockquote-border-color: var(--color-accent);
+  --blockquote-color: var(--text-muted);
+  --list-marker-color: var(--color-accent);
+
+  --inline-title-color: var(--text-normal);
+  --inline-title-size: 1.6em;
+  --inline-title-weight: 600;
+  --etc-p-h1-size: 1.75em;
+  --etc-p-h1-weight: 600;
+  --etc-p-h1-tracking: -0.005em;
+  --etc-p-h2-size: 1.5em;
+  --etc-p-h2-weight: 600;
+  --etc-p-h2-tracking: -0.005em;
+  --etc-p-h3-size: 1.25em;
+  --etc-p-h3-weight: 600;
+  --etc-p-h3-tracking: -0.005em;
+  --etc-p-h4-size: 1.1em;
+  --etc-p-h4-weight: 600;
+  --etc-p-h4-tracking: -0.005em;
+  --etc-p-h5-size: 1em;
+  --etc-p-h5-weight: 600;
+  --etc-p-h5-tracking: -0.005em;
+  --etc-p-h6-size: 1em;
+  --etc-p-h6-weight: 600;
+  --etc-p-h6-tracking: -0.005em;
+  --nav-item-radius: 6px;
+  --etc-p-menu-selection: var(--background-modifier-active-hover);
+}
+.theme-light:where(.etc-scheme-bear) {
+  --etc-p-left-sidebar: #2f3235;
+  --accent-h: 359;
+  --accent-s: 68%;
+  --accent-l: 58%;
+
+  --background-primary: #ffffff;
+  --background-primary-alt: #fafafa;
+  --background-secondary: #fafafa;
+  --background-secondary-alt: #f2f2f2;
+  --background-modifier-border: #e4e4e4;
+  --background-modifier-border-hover: #d6d6d6;
+  --background-modifier-border-focus: #c8c8c8;
+  --background-modifier-hover: rgba(0, 0, 0, 0.04);
+  --background-modifier-active-hover: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.12);
+  --background-modifier-form-field: #ffffff;
+
+  --text-normal: #3d3d3d;
+  --text-muted: #8e8e8e;
+  --text-faint: #b8b8b8;
+  --text-selection: #e9f2fd;
+  --text-highlight-bg: rgba(255, 219, 77, 0.45);
+
+  --interactive-normal: #f2f2f2;
+  --interactive-hover: #e8e8e8;
+  --hr-color: #e4e4e4;
+
+  --checkbox-border-color: #c4c4c4;
+  --checkbox-border-color-hover: #a8a8a8;
+  --checkbox-marker-color: #ffffff;
+
+  --tag-background: #eeeeee;
+  --tag-background-hover: #e5e5e5;
+  --tag-color: #4a4a4a;
+  --tag-color-hover: #3d3d3d;
+
+  --code-background: #f5f5f5;
+  --code-normal: #3d3d3d;
+  --etc-p-h1-color: #2f2f2f;
+  --etc-p-h2-color: #2f2f2f;
+  --etc-p-h3-color: #2f2f2f;
+  --etc-p-h4-color: #3d3d3d;
+  --etc-p-h5-color: #3d3d3d;
+  --etc-p-h6-color: #8e8e8e;
+}
+.theme-dark:where(.etc-scheme-bear) {
+  --etc-p-left-sidebar: #2b2b2d;
+  --accent-h: 207;
+  --accent-s: 79%;
+  --accent-l: 60%;
+
+  --background-primary: #1e1e1e;
+  --background-primary-alt: #242424;
+  --background-secondary: #222222;
+  --background-secondary-alt: #2b2b2d;
+  --background-modifier-border: #363636;
+  --background-modifier-border-hover: #424242;
+  --background-modifier-border-focus: #4e4e4e;
+  --background-modifier-hover: rgba(255, 255, 255, 0.05);
+  --background-modifier-active-hover: #31353b;
+  --background-modifier-form-field: #2a2a2a;
+  --nav-item-background-active: #31353b;
+  --nav-item-background-selected: #31353b;
+
+  --text-normal: #e2e2e2;
+  --text-muted: #9a9a9a;
+  --text-faint: #666666;
+  --text-selection: #31353b;
+  --text-highlight-bg: rgba(255, 210, 60, 0.3);
+
+  --interactive-normal: #2c2c2e;
+  --interactive-hover: #353537;
+  --hr-color: #383838;
+
+  --checkbox-border-color: #5c5c5c;
+  --checkbox-border-color-hover: #7a7a7a;
+  --checkbox-marker-color: #1e1e1e;
+
+  --tag-background: #333335;
+  --tag-background-hover: #3c3c3e;
+  --tag-color: #dcdcdc;
+  --tag-color-hover: #ffffff;
+
+  --code-background: #262626;
+  --code-normal: #e2e2e2;
+  --etc-p-h1-color: #f0f0f0;
+  --etc-p-h2-color: #f0f0f0;
+  --etc-p-h3-color: #f0f0f0;
+  --etc-p-h4-color: #e2e2e2;
+  --etc-p-h5-color: #e2e2e2;
+  --etc-p-h6-color: #9a9a9a;
+}
+
+/* ---------- Griply ---------- */
+:is(.theme-light, .theme-dark):where(.etc-scheme-griply) {
+  --color-red-rgb: 235, 69, 68;
+  --color-red: #eb4544;
+  --color-orange-rgb: 224, 160, 74;
+  --color-orange: #e0a04a;
+  --color-yellow-rgb: 240, 196, 60;
+  --color-yellow: #f0c43c;
+  --color-green-rgb: 72, 190, 110;
+  --color-green: #48be6e;
+  --color-cyan-rgb: 70, 180, 200;
+  --color-cyan: #46b4c8;
+  --color-blue-rgb: 58, 147, 252;
+  --color-blue: #3a93fc;
+  --color-purple-rgb: 160, 128, 230;
+  --color-purple: #a080e6;
+  --color-pink-rgb: 232, 80, 140;
+  --color-pink: #e8508c;
+
+  --titlebar-background: var(--background-secondary);
+  --ribbon-background: var(--background-secondary);
+  --tab-container-background: var(--background-secondary);
+  --status-bar-background: var(--background-secondary);
+  --hr-color: var(--background-modifier-border);
+  --blockquote-border-color: var(--color-accent);
+  --inline-title-color: var(--text-normal);
+
+  --checkbox-radius: 4px;
+  --checklist-done-decoration: line-through;
+  --checklist-done-color: var(--text-muted);
+  --tag-radius: 6px;
+  --tag-border-width: 1px;
+  --link-decoration: underline;
+  --link-external-decoration: underline;
+  --nav-item-radius: 6px;
+  --etc-p-menu-selection: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.16);
+  --etc-p-h1-weight: 700;
+  --etc-p-h2-weight: 600;
+  --etc-p-h2-divider: 1;
+  --etc-p-h1-color: var(--text-normal);
+  --etc-p-h2-color: var(--text-normal);
+  --etc-p-h3-color: var(--text-normal);
+  --etc-p-h4-color: var(--text-normal);
+  --etc-p-h5-color: var(--text-muted);
+  --etc-p-h6-color: var(--text-muted);
+}
+.theme-light:where(.etc-scheme-griply) {
+  --color-red-rgb: 218, 38, 42;
+  --color-red: #da262a;
+  --color-orange-rgb: 212, 133, 46;
+  --color-orange: #d4852e;
+  --color-blue-rgb: 10, 110, 245;
+  --color-blue: #0a6ef5;
+
+  --accent-h: 245;
+  --accent-s: 56.7%;
+  --accent-l: 49.8%;
+
+  --background-primary: #ffffff;
+  --background-primary-alt: #fafafa;
+  --background-secondary: #f6f6f6;
+  --background-secondary-alt: #f0f0f0;
+  --background-modifier-border: #ececec;
+  --background-modifier-border-hover: #e2e2e2;
+  --background-modifier-border-focus: #d4d4d4;
+  --background-modifier-hover: rgba(0, 0, 0, 0.035);
+  --background-modifier-active-hover: #e9e9e9;
+  --background-modifier-form-field: #ffffff;
+
+  --text-normal: #2b2b2b;
+  --text-muted: #929292;
+  --text-faint: #bfbfbf;
+  --text-selection: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.18);
+  --text-highlight-bg: rgba(240, 196, 60, 0.35);
+
+  --interactive-normal: #f5f5f5;
+  --interactive-hover: #efefef;
+
+  --icon-color: #777777;
+  --icon-color-hover: #2b2b2b;
+  --icon-color-active: #2b2b2b;
+  --icon-color-focused: #2b2b2b;
+
+  --nav-item-color: #585858;
+  --nav-item-color-hover: #2b2b2b;
+  --nav-item-color-active: #2b2b2b;
+  --nav-item-background-hover: rgba(0, 0, 0, 0.035);
+  --nav-item-background-active: #e9e9e9;
+  --nav-item-background-selected: #e9e9e9;
+  --nav-heading-color: #343434;
+
+  --checkbox-border-color: #d6d6d6;
+  --checkbox-border-color-hover: #b8b8b8;
+  --checkbox-marker-color: #ffffff;
+
+  --tag-background: transparent;
+  --tag-background-hover: rgba(0, 0, 0, 0.035);
+  --tag-color: #909090;
+  --tag-color-hover: #2b2b2b;
+  --tag-border-color: #ececec;
+  --tag-border-color-hover: #d4d4d4;
+
+  --code-background: #fafafa;
+}
+.theme-dark:where(.etc-scheme-griply) {
+  --accent-h: 239.6;
+  --accent-s: 81.7%;
+  --accent-l: 65.7%;
+
+  --background-primary: #1d1d1d;
+  --background-primary-alt: #222222;
+  --background-secondary: #161616;
+  --background-secondary-alt: #141414;
+  --background-modifier-border: #2b2b2b;
+  --background-modifier-border-hover: #333333;
+  --background-modifier-border-focus: #3d3d3d;
+  --background-modifier-hover: rgba(255, 255, 255, 0.04);
+  --background-modifier-active-hover: #242424;
+  --background-modifier-form-field: #242424;
+
+  --text-normal: #ffffff;
+  --text-muted: #8e8e8e;
+  --text-faint: #626262;
+  --text-selection: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.3);
+  --text-highlight-bg: rgba(224, 160, 74, 0.3);
+
+  --interactive-normal: #2a2a2a;
+  --interactive-hover: #2f2f2f;
+
+  --icon-color: #acacac;
+  --icon-color-hover: #ffffff;
+  --icon-color-active: #ffffff;
+  --icon-color-focused: #ffffff;
+
+  --nav-item-color: #a0a0a0;
+  --nav-item-color-hover: #ffffff;
+  --nav-item-color-active: #ffffff;
+  --nav-item-background-hover: rgba(255, 255, 255, 0.04);
+  --nav-item-background-active: #242424;
+  --nav-item-background-selected: #242424;
+  --nav-heading-color: #fafafa;
+
+  --checkbox-border-color: #3f3f3f;
+  --checkbox-border-color-hover: #5a5a5a;
+  --checkbox-marker-color: #ffffff;
+
+  --tag-background: transparent;
+  --tag-background-hover: rgba(255, 255, 255, 0.04);
+  --tag-color: #959595;
+  --tag-color-hover: #ffffff;
+  --tag-border-color: #2b2b2b;
+  --tag-border-color-hover: #3d3d3d;
+
+  --code-background: #222222;
+}
+
+/* ---------- Obsidian (Obsidian's own colors and type) ---------- */
+:is(.theme-light, .theme-dark):where(.etc-scheme-obsidian) {
+  --nav-item-radius: var(--radius-s);
+}
+
+/* ==========================================================================
+   3. Shared mappings (every scheme)
+   Accent-derived colors follow --accent-h/s/l, so the Accent override in
+   Style Settings recolors links, checkboxes and selection everywhere.
+   ========================================================================== */
+:is(.theme-light, .theme-dark) {
+  --text-accent: var(--color-accent);
+  --text-accent-hover: var(--etc-accent-hover);
+  --interactive-accent: var(--color-accent);
+  --interactive-accent-hover: var(--etc-accent-hover);
+  --checkbox-color: var(--color-accent);
+  --checkbox-color-hover: var(--etc-accent-hover);
+  --text-on-accent: #ffffff;
+  --titlebar-background-focused: var(--titlebar-background);
+
+  --etc-ui-border-color: var(--etc-ui-border, var(--background-modifier-border));
+
+  /* Heading chain: level override → general setting → scheme */
+  --h1-size: var(--etc-h1-size, calc(var(--etc-p-h1-size) * var(--etc-heading-scale)));
+  --h1-weight: var(--etc-h1-weight, var(--etc-heading-weight, var(--etc-p-h1-weight)));
+  --h1-color: var(--etc-h1-color, var(--etc-heading-color, var(--etc-p-h1-color)));
+  --h1-letter-spacing: var(--etc-heading-tracking, var(--etc-p-h1-tracking));
+  --h1-line-height: var(--etc-heading-line-height, var(--etc-p-h1-line-height));
+  --h1-font: var(--etc-heading-font, var(--font-text));
+  --h1-variant: var(--etc-h1-variant, var(--etc-hcase-variant, normal));
+  --h2-size: var(--etc-h2-size, calc(var(--etc-p-h2-size) * var(--etc-heading-scale)));
+  --h2-weight: var(--etc-h2-weight, var(--etc-heading-weight, var(--etc-p-h2-weight)));
+  --h2-color: var(--etc-h2-color, var(--etc-heading-color, var(--etc-p-h2-color)));
+  --h2-letter-spacing: var(--etc-heading-tracking, var(--etc-p-h2-tracking));
+  --h2-line-height: var(--etc-heading-line-height, var(--etc-p-h2-line-height));
+  --h2-font: var(--etc-heading-font, var(--font-text));
+  --h2-variant: var(--etc-h2-variant, var(--etc-hcase-variant, normal));
+  --h3-size: var(--etc-h3-size, calc(var(--etc-p-h3-size) * var(--etc-heading-scale)));
+  --h3-weight: var(--etc-h3-weight, var(--etc-heading-weight, var(--etc-p-h3-weight)));
+  --h3-color: var(--etc-h3-color, var(--etc-heading-color, var(--etc-p-h3-color)));
+  --h3-letter-spacing: var(--etc-heading-tracking, var(--etc-p-h3-tracking));
+  --h3-line-height: var(--etc-heading-line-height, var(--etc-p-h3-line-height));
+  --h3-font: var(--etc-heading-font, var(--font-text));
+  --h3-variant: var(--etc-h3-variant, var(--etc-hcase-variant, normal));
+  --h4-size: var(--etc-h4-size, calc(var(--etc-p-h4-size) * var(--etc-heading-scale)));
+  --h4-weight: var(--etc-h4-weight, var(--etc-heading-weight, var(--etc-p-h4-weight)));
+  --h4-color: var(--etc-h4-color, var(--etc-heading-color, var(--etc-p-h4-color)));
+  --h4-letter-spacing: var(--etc-heading-tracking, var(--etc-p-h4-tracking));
+  --h4-line-height: var(--etc-heading-line-height, var(--etc-p-h4-line-height));
+  --h4-font: var(--etc-heading-font, var(--font-text));
+  --h4-variant: var(--etc-h4-variant, var(--etc-hcase-variant, normal));
+  --h5-size: var(--etc-h5-size, calc(var(--etc-p-h5-size) * var(--etc-heading-scale)));
+  --h5-weight: var(--etc-h5-weight, var(--etc-heading-weight, var(--etc-p-h5-weight)));
+  --h5-color: var(--etc-h5-color, var(--etc-heading-color, var(--etc-p-h5-color)));
+  --h5-letter-spacing: var(--etc-heading-tracking, var(--etc-p-h5-tracking));
+  --h5-line-height: var(--etc-heading-line-height, var(--etc-p-h5-line-height));
+  --h5-font: var(--etc-heading-font, var(--font-text));
+  --h5-variant: var(--etc-h5-variant, var(--etc-hcase-variant, normal));
+  --h6-size: var(--etc-h6-size, calc(var(--etc-p-h6-size) * var(--etc-heading-scale)));
+  --h6-weight: var(--etc-h6-weight, var(--etc-heading-weight, var(--etc-p-h6-weight)));
+  --h6-color: var(--etc-h6-color, var(--etc-heading-color, var(--etc-p-h6-color)));
+  --h6-letter-spacing: var(--etc-heading-tracking, var(--etc-p-h6-tracking));
+  --h6-line-height: var(--etc-heading-line-height, var(--etc-p-h6-line-height));
+  --h6-font: var(--etc-heading-font, var(--font-text));
+  --h6-variant: var(--etc-h6-variant, var(--etc-hcase-variant, normal));
+}
+
+/* ==========================================================================
+   4. Option classes (set by Style Settings, beat every scheme)
+   ========================================================================== */
+
+/* ---------- Checkboxes ---------- */
+body.etc-checkbox-round { --checkbox-radius: 50%; }
+body.etc-checkbox-rounded { --checkbox-radius: 4px; }
+body.etc-checkbox-square { --checkbox-radius: 1px; }
+
+body.etc-done-strike {
+  --checklist-done-decoration: line-through;
+  --checklist-done-color: var(--text-muted);
+}
+body.etc-done-faded {
+  --checklist-done-decoration: none;
+  --checklist-done-color: var(--text-faint);
+}
+body.etc-done-plain {
+  --checklist-done-decoration: none;
+  --checklist-done-color: var(--text-normal);
+}
+
+/* ---------- Tags ---------- */
+body.etc-tags-pill {
+  --tag-radius: 999px;
+  --tag-padding-x: 0.65em;
+  --tag-padding-y: 0.15em;
+  --tag-border-width: 0px;
+  --tag-border-color: transparent;
+  --tag-background: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.14);
+  --tag-background-hover: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.22);
+  --tag-color: var(--text-accent);
+  --tag-color-hover: var(--text-accent);
+}
+body.etc-tags-outlined {
+  --tag-radius: 6px;
+  --tag-padding-x: 0.5em;
+  --tag-padding-y: 0.1em;
+  --tag-border-width: 1px;
+  --tag-border-color: var(--background-modifier-border);
+  --tag-border-color-hover: var(--background-modifier-border-focus);
+  --tag-background: transparent;
+  --tag-background-hover: var(--background-modifier-hover);
+  --tag-color: var(--text-muted);
+  --tag-color-hover: var(--text-normal);
+}
+body.etc-tags-plain {
+  --tag-padding-x: 0;
+  --tag-padding-y: 0;
+  --tag-border-width: 0px;
+  --tag-border-color: transparent;
+  --tag-background: transparent;
+  --tag-background-hover: transparent;
+  --tag-color: var(--text-accent);
+  --tag-color-hover: var(--text-accent-hover);
+}
+
+/* ---------- Links ---------- */
+body.etc-links-underline {
+  --link-decoration: underline;
+  --link-external-decoration: underline;
+}
+body.etc-links-plain {
+  --link-decoration: none;
+  --link-external-decoration: none;
+}
+
+/* ---------- Menu selection ---------- */
+body.etc-menu-accent { --etc-p-menu-selection: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.2); }
+body.etc-menu-grey { --etc-p-menu-selection: var(--nav-item-background-active); }
+
+/* ---------- Headings: general ---------- */
+body.etc-heading-accent { --etc-heading-color: var(--text-accent); }
+body.etc-hcase-upper {
+  --etc-hcase-transform: uppercase;
+  --etc-hcase-variant: normal;
+}
+body.etc-hcase-smallcaps {
+  --etc-hcase-transform: none;
+  --etc-hcase-variant: small-caps;
+}
+body.etc-hd-none {
+  --etc-p-h1-divider: 0;
+  --etc-p-h2-divider: 0;
+  --etc-p-h3-divider: 0;
+  --etc-p-h4-divider: 0;
+  --etc-p-h5-divider: 0;
+  --etc-p-h6-divider: 0;
+}
+body.etc-hd-h1 {
+  --etc-p-h1-divider: 1;
+  --etc-p-h2-divider: 0;
+  --etc-p-h3-divider: 0;
+  --etc-p-h4-divider: 0;
+  --etc-p-h5-divider: 0;
+  --etc-p-h6-divider: 0;
+}
+body.etc-hd-h1-h2 {
+  --etc-p-h1-divider: 1;
+  --etc-p-h2-divider: 1;
+  --etc-p-h3-divider: 0;
+  --etc-p-h4-divider: 0;
+  --etc-p-h5-divider: 0;
+  --etc-p-h6-divider: 0;
+}
+body.etc-hd-h1-h3 {
+  --etc-p-h1-divider: 1;
+  --etc-p-h2-divider: 1;
+  --etc-p-h3-divider: 1;
+  --etc-p-h4-divider: 0;
+  --etc-p-h5-divider: 0;
+  --etc-p-h6-divider: 0;
+}
+body.etc-hd-all {
+  --etc-p-h1-divider: 1;
+  --etc-p-h2-divider: 1;
+  --etc-p-h3-divider: 1;
+  --etc-p-h4-divider: 1;
+  --etc-p-h5-divider: 1;
+  --etc-p-h6-divider: 1;
+}
+
+/* ---------- Headings: per level (after general so they win) ---------- */
+body.etc-h1-divider-show { --etc-p-h1-divider: 1; }
+body.etc-h1-divider-hide { --etc-p-h1-divider: 0; }
+body.etc-h1-case-none { --etc-h1-transform: none; --etc-h1-variant: normal; }
+body.etc-h1-case-upper { --etc-h1-transform: uppercase; --etc-h1-variant: normal; }
+body.etc-h1-case-smallcaps { --etc-h1-transform: none; --etc-h1-variant: small-caps; }
+body.etc-h2-divider-show { --etc-p-h2-divider: 1; }
+body.etc-h2-divider-hide { --etc-p-h2-divider: 0; }
+body.etc-h2-case-none { --etc-h2-transform: none; --etc-h2-variant: normal; }
+body.etc-h2-case-upper { --etc-h2-transform: uppercase; --etc-h2-variant: normal; }
+body.etc-h2-case-smallcaps { --etc-h2-transform: none; --etc-h2-variant: small-caps; }
+body.etc-h3-divider-show { --etc-p-h3-divider: 1; }
+body.etc-h3-divider-hide { --etc-p-h3-divider: 0; }
+body.etc-h3-case-none { --etc-h3-transform: none; --etc-h3-variant: normal; }
+body.etc-h3-case-upper { --etc-h3-transform: uppercase; --etc-h3-variant: normal; }
+body.etc-h3-case-smallcaps { --etc-h3-transform: none; --etc-h3-variant: small-caps; }
+body.etc-h4-divider-show { --etc-p-h4-divider: 1; }
+body.etc-h4-divider-hide { --etc-p-h4-divider: 0; }
+body.etc-h4-case-none { --etc-h4-transform: none; --etc-h4-variant: normal; }
+body.etc-h4-case-upper { --etc-h4-transform: uppercase; --etc-h4-variant: normal; }
+body.etc-h4-case-smallcaps { --etc-h4-transform: none; --etc-h4-variant: small-caps; }
+body.etc-h5-divider-show { --etc-p-h5-divider: 1; }
+body.etc-h5-divider-hide { --etc-p-h5-divider: 0; }
+body.etc-h5-case-none { --etc-h5-transform: none; --etc-h5-variant: normal; }
+body.etc-h5-case-upper { --etc-h5-transform: uppercase; --etc-h5-variant: normal; }
+body.etc-h5-case-smallcaps { --etc-h5-transform: none; --etc-h5-variant: small-caps; }
+body.etc-h6-divider-show { --etc-p-h6-divider: 1; }
+body.etc-h6-divider-hide { --etc-p-h6-divider: 0; }
+body.etc-h6-case-none { --etc-h6-transform: none; --etc-h6-variant: normal; }
+body.etc-h6-case-upper { --etc-h6-transform: uppercase; --etc-h6-variant: normal; }
+body.etc-h6-case-smallcaps { --etc-h6-transform: none; --etc-h6-variant: small-caps; }
+
+/* ---------- Panes ---------- */
+body.etc-pane-no-outline { --etc-card-outline-width: 0px; }
+body.etc-left-elevated { --etc-window-bg: var(--background-secondary-alt); }
+
+/* ==========================================================================
+   5. Headings
+   ========================================================================== */
+.markdown-rendered h1,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-1 {
+  text-align: var(--etc-h1-align, var(--etc-heading-align, start));
+  text-transform: var(--etc-h1-transform, var(--etc-hcase-transform, none));
+  border-bottom: calc(var(--etc-p-h1-divider) * var(--etc-heading-divider-width))
+    var(--etc-heading-divider-style) var(--etc-heading-divider-color);
+  padding-bottom: calc(var(--etc-p-h1-divider) * var(--etc-heading-divider-gap));
+}
+.markdown-rendered h2,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-2 {
+  text-align: var(--etc-h2-align, var(--etc-heading-align, start));
+  text-transform: var(--etc-h2-transform, var(--etc-hcase-transform, none));
+  border-bottom: calc(var(--etc-p-h2-divider) * var(--etc-heading-divider-width))
+    var(--etc-heading-divider-style) var(--etc-heading-divider-color);
+  padding-bottom: calc(var(--etc-p-h2-divider) * var(--etc-heading-divider-gap));
+}
+.markdown-rendered h3,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-3 {
+  text-align: var(--etc-h3-align, var(--etc-heading-align, start));
+  text-transform: var(--etc-h3-transform, var(--etc-hcase-transform, none));
+  border-bottom: calc(var(--etc-p-h3-divider) * var(--etc-heading-divider-width))
+    var(--etc-heading-divider-style) var(--etc-heading-divider-color);
+  padding-bottom: calc(var(--etc-p-h3-divider) * var(--etc-heading-divider-gap));
+}
+.markdown-rendered h4,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-4 {
+  text-align: var(--etc-h4-align, var(--etc-heading-align, start));
+  text-transform: var(--etc-h4-transform, var(--etc-hcase-transform, none));
+  border-bottom: calc(var(--etc-p-h4-divider) * var(--etc-heading-divider-width))
+    var(--etc-heading-divider-style) var(--etc-heading-divider-color);
+  padding-bottom: calc(var(--etc-p-h4-divider) * var(--etc-heading-divider-gap));
+}
+.markdown-rendered h5,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-5 {
+  text-align: var(--etc-h5-align, var(--etc-heading-align, start));
+  text-transform: var(--etc-h5-transform, var(--etc-hcase-transform, none));
+  border-bottom: calc(var(--etc-p-h5-divider) * var(--etc-heading-divider-width))
+    var(--etc-heading-divider-style) var(--etc-heading-divider-color);
+  padding-bottom: calc(var(--etc-p-h5-divider) * var(--etc-heading-divider-gap));
+}
+.markdown-rendered h6,
+.markdown-source-view.mod-cm6 .cm-line.HyperMD-header-6 {
+  text-align: var(--etc-h6-align, var(--etc-heading-align, start));
+  text-transform: var(--etc-h6-transform, var(--etc-hcase-transform, none));
+  border-bottom: calc(var(--etc-p-h6-divider) * var(--etc-heading-divider-width))
+    var(--etc-heading-divider-style) var(--etc-heading-divider-color);
+  padding-bottom: calc(var(--etc-p-h6-divider) * var(--etc-heading-divider-gap));
+}
+
+.inline-title {
+  text-align: var(--etc-inline-title-align, start);
+}
+body.etc-inline-title-divider .inline-title {
+  padding-bottom: var(--etc-heading-divider-gap);
+  border-bottom: var(--etc-heading-divider-width) var(--etc-heading-divider-style) var(--etc-heading-divider-color);
+}
+
+/* ==========================================================================
+   6. Panes
+   ========================================================================== */
+
+/* ---------- Window behind the cards ---------- */
+body:is(.etc-left-elevated, .etc-main-elevated, .etc-right-elevated):not(.is-translucent) .workspace {
+  background-color: var(--etc-window-bg);
+}
+/* Divider lines give way to the gaps between cards */
+body:is(.etc-main-elevated, .etc-right-elevated) .workspace {
+  --etc-divider: transparent;
+}
+
+/* ---------- Shared card look ---------- */
+body.etc-left-elevated .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed),
+body.etc-main-elevated .workspace > .workspace-split.mod-root,
+body.etc-right-elevated .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+  --etc-card-bg: var(--etc-card-surface);
+  box-sizing: border-box;
+  height: auto;
+  border: var(--etc-card-outline-width) solid var(--etc-ui-border-color) !important;
+  border-radius: var(--etc-pane-radius);
+  box-shadow: var(--etc-pane-shadow) !important;
+  overflow: hidden;
+  /* !important beats Obsidian's translucent-window rule, which clears split backgrounds */
+  background-color: var(--etc-card-bg) !important;
+}
+
+/* Left card keeps the sidebar color */
+body.etc-left-elevated .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed) {
+  --etc-card-surface: var(--background-secondary);
+  margin: var(--etc-pane-gap) 0 var(--etc-pane-gap) var(--etc-pane-gap);
+}
+body.etc-left-elevated:not(.etc-main-elevated) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed) {
+  margin-right: var(--etc-pane-gap);
+}
+
+/* Main and right cards use the editor color throughout */
+body.etc-main-elevated .workspace > .workspace-split.mod-root,
+body.etc-right-elevated .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+  --background-secondary: var(--background-primary);
+  --tab-container-background: var(--background-primary);
+  --etc-card-surface: var(--background-primary);
+  margin: var(--etc-pane-gap) var(--etc-pane-gap) var(--etc-pane-gap) 0;
+}
+
+/* Main card needs its own left gap when nothing flat sits beside it */
+body.etc-main-elevated.etc-left-elevated .workspace > .workspace-split.mod-root,
+body.etc-main-elevated.etc-reveal-left .workspace > .workspace-split.mod-root,
+body.etc-main-elevated .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed + .workspace-split.mod-root,
+body.etc-main-elevated .workspace > .workspace-ribbon.mod-left + .workspace-split.mod-root {
+  margin-left: var(--etc-pane-gap);
+}
+/* Right card next to a flat editor needs its own left gap */
+body.etc-right-elevated:not(.etc-main-elevated) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+  margin-left: var(--etc-pane-gap);
+}
+
+/* Right card's tab strip and panes inherit the card color */
+body.etc-right-elevated .workspace-split.mod-right-split .workspace-tab-header-container,
+body.etc-right-elevated .workspace-split.mod-right-split .workspace-tabs,
+body.etc-right-elevated .workspace-split.mod-right-split .view-content {
+  background-color: transparent;
+}
+
+/* Right sidebar toggle (macOS) moves inside the card's corner */
+:is(body.etc-right-elevated:not(.etc-reveal-right):has(.workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed)),
+body.etc-main-elevated:has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed)).mod-macos.is-hidden-frameless:not(.is-popout-window) .sidebar-toggle-button.mod-right {
+  top: calc(var(--etc-pane-gap) + 1px);
+  right: calc(var(--etc-pane-gap) + 1px);
+  border-top-right-radius: var(--etc-pane-radius);
+  background-color: transparent;
+}
+
+/* Status bar tucks into the bottom-right corner of the card under it */
+:is(body.etc-right-elevated:not(.etc-reveal-right):has(.workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed)),
+body.etc-main-elevated:has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed)) .status-bar {
+  right: calc(var(--etc-pane-gap) + 1px);
+  bottom: calc(var(--etc-pane-gap) + 1px);
+  border: none;
+  border-radius: var(--etc-pane-radius) 0 var(--etc-pane-radius) 0;
+  background-color: var(--background-primary);
+}
+
+/* ---------- Custom left sidebar color ----------
+   Only when a color is set (or the scheme sets one). Text, icons, hover and
+   selection colors are derived from it, light on dark colors and dark on light. */
+body {
+  --etc-ls-probe: var(--etc-left-sidebar-color, var(--etc-p-left-sidebar, none));
+}
+@container not style(--etc-ls-probe: none) {
+  :is(.workspace-split.mod-left-split, .workspace-ribbon.mod-left) {
+    --etc-ls: var(--etc-ls-probe);
+    --background-secondary: var(--etc-ls);
+    --background-secondary-alt: var(--etc-ls);
+    --background-primary: var(--etc-ls);
+    --background-primary-alt: oklch(from var(--etc-ls) calc(l + 0.03 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --tab-container-background: var(--etc-ls);
+    --titlebar-background: var(--etc-ls);
+    --titlebar-background-focused: var(--etc-ls);
+    --ribbon-background: var(--etc-ls);
+    --text-normal: oklch(from var(--etc-ls) calc(0.25 + 0.65 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --text-muted: oklch(from var(--etc-ls) calc(0.52 + 0.2 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --text-faint: oklch(from var(--etc-ls) calc(0.7 + -0.15 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --icon-color: oklch(from var(--etc-ls) calc(0.5 + 0.25 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --icon-color-hover: oklch(from var(--etc-ls) calc(0.15 + 0.85 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --icon-color-active: oklch(from var(--etc-ls) calc(0.15 + 0.85 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --icon-color-focused: oklch(from var(--etc-ls) calc(0.15 + 0.85 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --background-modifier-hover: oklch(from var(--etc-ls) calc(l + 0.05 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --background-modifier-active-hover: oklch(from var(--etc-ls) calc(l + 0.09 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --background-modifier-border: oklch(from var(--etc-ls) calc(l + 0.07 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --background-modifier-form-field: oklch(from var(--etc-ls) calc(l + 0.05 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --interactive-normal: oklch(from var(--etc-ls) calc(l + 0.05 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --interactive-hover: oklch(from var(--etc-ls) calc(l + 0.1 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --nav-item-color: oklch(from var(--etc-ls) calc(0.25 + 0.65 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --nav-item-color-hover: oklch(from var(--etc-ls) calc(0.15 + 0.85 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --nav-item-color-active: oklch(from var(--etc-ls) calc(0.15 + 0.85 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --nav-item-color-selected: oklch(from var(--etc-ls) calc(0.15 + 0.85 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --nav-item-background-hover: oklch(from var(--etc-ls) calc(l + 0.05 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --nav-item-background-active: oklch(from var(--etc-ls) calc(l + 0.1 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --nav-item-background-selected: oklch(from var(--etc-ls) calc(l + 0.1 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --nav-collapse-icon-color: oklch(from var(--etc-ls) calc(0.62 + -0.02 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --nav-collapse-icon-color-collapsed: oklch(from var(--etc-ls) calc(0.62 + -0.02 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --tab-text-color: oklch(from var(--etc-ls) calc(0.52 + 0.2 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --tab-text-color-focused: oklch(from var(--etc-ls) calc(0.25 + 0.65 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --tab-text-color-focused-active: oklch(from var(--etc-ls) calc(0.15 + 0.85 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --tab-text-color-focused-active-current: oklch(from var(--etc-ls) calc(0.15 + 0.85 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --vault-profile-color: oklch(from var(--etc-ls) calc(0.25 + 0.65 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --vault-profile-color-hover: oklch(from var(--etc-ls) calc(0.15 + 0.85 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+    --tag-background: oklch(from var(--etc-ls) calc(l + 0.1 * (2 * clamp(0, (0.6 - l) * 1000, 1) - 1)) c h);
+    --tag-color: oklch(from var(--etc-ls) calc(0.25 + 0.65 * clamp(0, (0.6 - l) * 1000, 1)) calc(c * 0.3) h);
+  }
+
+  /* Paint it solid top to bottom; translucent mode clears these with !important.
+     An elevated sidebar is painted by its card instead. */
+  body:not(.etc-left-elevated) :is(
+    .workspace-split.mod-left-split,
+    .workspace-split.mod-left-split .workspace-tabs,
+    .workspace-split.mod-left-split .workspace-tab-header-container,
+    .workspace-split.mod-left-split .workspace-leaf,
+    .workspace-split.mod-left-split .workspace-leaf-content,
+    .workspace-split.mod-left-split .view-header,
+    .workspace-split.mod-left-split .view-content,
+    .workspace-split.mod-left-split .nav-header,
+    .workspace-split.mod-left-split .workspace-sidedock-vault-profile,
+    .workspace-ribbon.mod-left,
+    .workspace-ribbon.mod-left::before
+  ) {
+    background-color: var(--etc-ls) !important;
+  }
+  .workspace-split.mod-left-split > .workspace-leaf-resize-handle {
+    background-color: transparent;
+    border-color: transparent;
+  }
+}
+
+/* ==========================================================================
+   7. Enhanced transparency (needs Appearance → Translucent window)
+   Obsidian lays a 60% opaque layer over the macOS vibrancy material. This
+   thins it to a light tint so the desktop shows through.
+   ========================================================================== */
+body.theme-light:is(.etc-glass, :not(.css-settings-manager)).is-translucent:not(.is-fullscreen) {
+  --workspace-background-translucent: color-mix(in srgb, var(--etc-glass-tint) var(--etc-glass-opacity-light), transparent);
+}
+body.theme-dark:is(.etc-glass, :not(.css-settings-manager)).is-translucent:not(.is-fullscreen) {
+  --workspace-background-translucent: color-mix(in srgb, var(--etc-glass-tint) var(--etc-glass-opacity-dark), transparent);
+}
+
+/* Sidebars only: the editor stays solid */
+body:is(.etc-glass, :not(.css-settings-manager)):not(.etc-glass-all).is-translucent:not(.is-fullscreen) .workspace > .workspace-split.mod-root {
+  background-color: var(--etc-card-bg, var(--background-primary)) !important;
+}
+
+/* Translucent elevated cards */
+body.is-translucent:not(.is-fullscreen) :is(
+  .workspace > .workspace-split.mod-left-split,
+  .workspace > .workspace-split.mod-root,
+  .workspace > .workspace-split.mod-right-split
+) {
+  --etc-card-bg: color-mix(in srgb, var(--etc-card-surface) var(--etc-glass-card-opacity), transparent);
+}
+
+/* ==========================================================================
+   8. UI borders
+   ========================================================================== */
+body {
+  --etc-divider: var(--etc-ui-border-color);
+}
+/* Set on .workspace so it beats Obsidian's translucent-window divider color */
+body .workspace {
+  --divider-color: var(--etc-divider);
+}
+
+/* ---------- Borderless (default) ---------- */
+body:not(.etc-chrome-hairline) {
+  --etc-divider: transparent;
+  --divider-color-hover: var(--etc-ui-border-color);
+  --tab-outline-color: transparent;
+  --titlebar-border-color: transparent;
+  --status-bar-border-color: transparent;
+  --ribbon-border-color: transparent;
+}
+body:not(.etc-chrome-hairline) :is(
+  .workspace-ribbon,
+  .workspace-ribbon.mod-left,
+  .workspace-split.mod-left-split,
+  .workspace-split.mod-right-split,
+  .workspace-tab-header-container,
+  .workspace-tabs .workspace-leaf,
+  .view-header,
+  .titlebar,
+  .status-bar,
+  .side-dock-actions,
+  .nav-header
+) {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ---------- Hairlines ---------- */
+body.etc-chrome-hairline {
+  --tab-outline-color: var(--etc-ui-border-color);
+  --titlebar-border-color: var(--etc-ui-border-color);
+  --status-bar-border-color: var(--etc-ui-border-color);
+  --ribbon-border-color: var(--etc-ui-border-color);
+}
+
+/* ---------- Rule under pane headers ---------- */
+body.etc-view-header-rule .workspace-leaf-content > .view-header,
+body.etc-view-header-rule .workspace-split.mod-sidedock .workspace-tab-header-container {
+  border-bottom: 1px solid var(--etc-ui-border-color) !important;
+}
+
+/* ---------- No focus ring on text fields ---------- */
+body:not(.etc-show-focus-ring) :is(
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="url"],
+  input:not([type]),
+  textarea,
+  .search-input-container input
+):is(:focus, :focus-visible, :active) {
+  box-shadow: none !important;
+  outline: none !important;
+  border-color: var(--background-modifier-border) !important;
+}
+
+/* ==========================================================================
+   9. Editor & sidebar details
+   ========================================================================== */
+
+/* ---------- Sidebar selection pills ---------- */
+.nav-file-title,
+.nav-folder-title,
+.tree-item-self {
+  border-radius: var(--nav-item-radius);
+}
+
+/* ---------- Menu / picker selection ---------- */
+.suggestion-item.is-selected,
+.menu-item.selected:not(.is-disabled):not(.is-label) {
+  background-color: var(--etc-p-menu-selection);
+}
+
+/* ---------- Folder glyphs ---------- */
+body:is(.etc-folder-icons-on, .etc-scheme-apple-notes:not(.etc-folder-icons-off)) .nav-folder-title-content::before {
+  content: "";
+  display: inline-block;
+  width: 1.05em;
+  height: 1.05em;
+  margin-right: 0.45em;
+  vertical-align: -0.15em;
+  background-color: var(--text-accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'%3E%3Cpath d='M3 6.5A1.5 1.5 0 0 1 4.5 5h4.2l2 2h8.8A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ---------- Hollow nested bullets ---------- */
+body:is(.etc-bullets-hollow, .etc-scheme-bear:not(.etc-bullets-filled)) :is(
+  .markdown-source-view.mod-cm6 :is(.HyperMD-list-line-2, .HyperMD-list-line-4, .HyperMD-list-line-6) .cm-formatting-list-ul .list-bullet,
+  .markdown-rendered ul ul > li > .list-bullet
+)::after {
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--list-marker-color);
+}
+
+/* ---------- Priority checkboxes ---------- */
+body:not(.etc-no-priority) :is(
+  .markdown-rendered li[data-task="!"] > input[type="checkbox"],
+  .markdown-source-view .HyperMD-task-line[data-task="!"] input[type="checkbox"]
+) {
+  border-color: var(--color-red);
+}
+body:not(.etc-no-priority) :is(
+  .markdown-rendered li[data-task=">"] > input[type="checkbox"],
+  .markdown-rendered li[data-task="<"] > input[type="checkbox"],
+  .markdown-source-view .HyperMD-task-line[data-task=">"] input[type="checkbox"],
+  .markdown-source-view .HyperMD-task-line[data-task="<"] input[type="checkbox"]
+) {
+  border-color: var(--color-orange);
+}
+
+/* ---------- Scheme-specific touches ---------- */
+body:is(.etc-scheme-apple-notes, .etc-scheme-griply) input[type="checkbox"] {
+  border-width: 1.5px;
+}
+body.etc-scheme-apple-notes :is(.markdown-rendered table, .cm-table-widget table) {
+  border-collapse: collapse;
+}
+body.etc-scheme-apple-notes :is(.nav-header, .workspace-sidedock-vault-profile) {
+  color: var(--text-muted);
+}
+body.etc-scheme-bear :is(.markdown-rendered :not(pre) > code, .cm-s-obsidian span.cm-inline-code) {
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.88em;
+}
+/* Bear paints tab bars in the editor color; sidebars keep the sidebar color */
+body.etc-scheme-bear .workspace-split.mod-sidedock {
+  --tab-container-background: var(--background-secondary);
+  --titlebar-background: var(--background-secondary);
+}
+body.etc-scheme-bear .markdown-rendered ul ul {
+  list-style-type: circle;
+}
+
+/* ==========================================================================
+   10. Sidebar toolbars collapse to a dim ellipsis
+   Opening: the strip grows, the ellipsis fades out, then the buttons fade in.
+   Closing: after a short pause the buttons fade, the strip shrinks and the
+   ellipsis returns. Keyboard focus and open menus keep it open.
+   ========================================================================== */
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:has(> .nav-buttons-container) {
+  transition-property: padding, min-height;
+  transition-duration: var(--etc-toolbar-duration);
+  transition-timing-function: var(--etc-toolbar-ease);
+}
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:has(> .nav-buttons-container):not(:hover, :focus-within, :has(.has-active-menu)) {
+  min-height: 0;
+  padding-block: 2px;
+  transition-delay: calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.3);
+}
+
+/* Collapsed: a short strip with the ellipsis */
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header .nav-buttons-container {
+  position: relative;
+  max-height: var(--etc-toolbar-height);
+  overflow: hidden;
+  transition: max-height var(--etc-toolbar-duration) var(--etc-toolbar-ease)
+    calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.3);
+}
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header .nav-buttons-container > * {
+  opacity: 0;
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-toolbar-close-delay);
+}
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header .nav-buttons-container::after {
+  content: var(--etc-toolbar-glyph);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--etc-toolbar-color);
+  font-size: var(--etc-toolbar-size);
+  line-height: 1;
+  pointer-events: none;
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.6) ease-in-out
+    calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.5);
+}
+
+/* Open: hover, keyboard focus, or a button's menu is open */
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hover, :focus-within, :has(.has-active-menu)) .nav-buttons-container {
+  max-height: var(--etc-toolbar-open-height);
+  transition-delay: 0s;
+}
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hover, :focus-within, :has(.has-active-menu)) .nav-buttons-container > * {
+  opacity: 1;
+  transition: opacity var(--etc-toolbar-duration) ease-out calc(var(--etc-toolbar-duration) * 0.35);
+}
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hover, :focus-within, :has(.has-active-menu)) .nav-buttons-container::after {
+  opacity: 0;
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.4) ease-out 0s;
+}
+
+/* Animate to the toolbar's real height where supported */
+@supports (interpolate-size: allow-keywords) {
+  body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header .nav-buttons-container {
+    interpolate-size: allow-keywords;
+    max-height: none;
+    height: var(--etc-toolbar-height);
+    transition-property: height;
+  }
+  body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hover, :focus-within, :has(.has-active-menu)) .nav-buttons-container {
+    max-height: none;
+    height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body,
+  html body.css-settings-manager {
+    --etc-toolbar-duration: 0ms;
+  }
+}
+
+/* ==========================================================================
+   11. Vault / Help / Settings bar at the bottom of the left sidebar
+   Fade: stays in place, invisible until hovered.
+   Collapse: shrinks to a slim strip with the same glyph as the toolbars.
+   ========================================================================== */
+body.etc-vault-bar-fade:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile > * {
+  opacity: 0;
+  transition: opacity var(--etc-toolbar-duration) ease-out var(--etc-toolbar-close-delay);
+}
+body.etc-vault-bar-fade:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu)) > * {
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile {
+  position: relative;
+  overflow: hidden;
+  max-height: var(--etc-toolbar-height);
+  padding-block: 0;
+  transition-property: max-height, padding;
+  transition-duration: var(--etc-toolbar-duration);
+  transition-timing-function: var(--etc-toolbar-ease);
+  transition-delay: calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.3);
+}
+body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile > * {
+  opacity: 0;
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-toolbar-close-delay);
+}
+body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile::after {
+  content: var(--etc-toolbar-glyph);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--etc-toolbar-color);
+  font-size: var(--etc-toolbar-size);
+  line-height: 1;
+  pointer-events: none;
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.6) ease-in-out
+    calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.5);
+}
+body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu)) {
+  max-height: var(--etc-vault-bar-open-height);
+  padding-block: var(--size-4-2);
+  transition-delay: 0s;
+}
+body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu)) > * {
+  opacity: 1;
+  transition: opacity var(--etc-toolbar-duration) ease-out calc(var(--etc-toolbar-duration) * 0.35);
+}
+body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu))::after {
+  opacity: 0;
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.4) ease-out 0s;
+}
+@supports (interpolate-size: allow-keywords) {
+  body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile {
+    interpolate-size: allow-keywords;
+    max-height: none;
+    height: var(--etc-toolbar-height);
+    transition-property: height, padding;
+  }
+  body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu)) {
+    max-height: none;
+    height: auto;
+  }
+}
+
+/* ==========================================================================
+   12. Hover to reveal: ribbon and sidebars
+   Each tucks away to a slim edge (--etc-reveal-strip) and slides out over
+   its neighbour on hover, so the editor never shifts. Keyboard focus and
+   open menus keep it out.
+   ========================================================================== */
+body:is(.etc-reveal-ribbon, .etc-reveal-left, .etc-reveal-right):not(.is-mobile) .workspace {
+  position: relative;
+}
+
+/* ---------- Ribbon ---------- */
+/* Takes up only the edge in the layout; the rest hangs off-screen */
+body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) {
+  --etc-ribbon-footprint: var(--etc-reveal-strip);
+}
+body.mod-macos.etc-reveal-ribbon.show-ribbon:not(.is-popout-window) {
+  --frame-left-space: calc(80px - var(--etc-reveal-strip));
+}
+body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left {
+  position: relative;
+  z-index: calc(var(--layer-sidedock) + 2);
+  margin-right: calc(var(--etc-reveal-strip) - var(--ribbon-width));
+  transform: translateX(calc(var(--etc-reveal-strip) - var(--ribbon-width)));
+  transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-toolbar-close-delay), box-shadow var(--etc-toolbar-duration) ease var(--etc-toolbar-close-delay);
+}
+body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left > * {
+  opacity: 0;
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-toolbar-close-delay);
+}
+body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)) {
+  transform: none;
+  box-shadow: var(--etc-reveal-shadow);
+  transition-delay: 0s;
+}
+body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)) > * {
+  opacity: 1;
+  transition-delay: calc(var(--etc-toolbar-duration) * 0.3);
+}
+
+/* ---------- Sidebars ---------- */
+/* Placeholders hold the edge in the layout while the sidebars float */
+body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-ribbon.mod-left {
+  order: -2;
+}
+body.etc-reveal-left:not(.is-mobile) .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed))::before,
+body.etc-reveal-right:not(.is-mobile) .workspace:has(> .workspace-split.mod-right-split:not(.is-sidedock-collapsed))::after {
+  content: "";
+  flex: 0 0 var(--etc-reveal-strip);
+}
+body.etc-reveal-left:not(.is-mobile) .workspace::before {
+  order: -1;
+}
+body.etc-reveal-right:not(.is-mobile) .workspace::after {
+  order: 99;
+}
+
+body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed),
+body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: calc(var(--layer-sidedock) + 1);
+  margin-left: 0;
+  margin-right: 0;
+  /* Floating over the editor, so never see-through; an elevated card keeps its own surface */
+  background-color: var(--etc-card-bg, var(--background-secondary)) !important;
+  transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-toolbar-close-delay), box-shadow var(--etc-toolbar-duration) ease var(--etc-toolbar-close-delay);
+}
+body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed) {
+  left: var(--etc-ribbon-footprint);
+  transform: translateX(calc(var(--etc-reveal-strip) - 100%));
+}
+body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+  right: 0;
+  transform: translateX(calc(100% - var(--etc-reveal-strip)));
+}
+body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed) > *,
+body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) > * {
+  opacity: 0;
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-toolbar-close-delay);
+}
+body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed):is(:hover, :focus-within, :has(.has-active-menu)),
+body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed):is(:hover, :focus-within, :has(.has-active-menu)) {
+  transform: none;
+  box-shadow: var(--etc-reveal-shadow) !important;
+  transition-delay: 0s;
+}
+body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed):is(:hover, :focus-within, :has(.has-active-menu)) > *,
+body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed):is(:hover, :focus-within, :has(.has-active-menu)) > * {
+  opacity: 1;
+  transition-delay: calc(var(--etc-toolbar-duration) * 0.3);
+}
+
+/* The left sidebar normally holds the macOS window-button space; while it is
+   tucked away the editor's top-left tab bar takes it over */
+body.etc-reveal-left.mod-macos.is-hidden-frameless:not(.is-fullscreen) .workspace-split.mod-root > .workspace-tabs.mod-top:first-child .workspace-tab-header-container,
+body.etc-reveal-left.mod-macos.is-hidden-frameless:not(.is-fullscreen) .workspace-split.mod-root > .workspace-split:first-child > .workspace-tabs.mod-top:first-child .workspace-tab-header-container {
+  padding-left: calc(var(--size-4-2) + var(--frame-left-space) - var(--etc-reveal-strip));
+}
+
+/* Status bar tucks into the editor card's corner, clear of the right edge */
+body.etc-main-elevated.etc-reveal-right:has(.workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed)) .status-bar {
+  right: calc(var(--etc-reveal-strip) + var(--etc-pane-gap) + 1px);
+  bottom: calc(var(--etc-pane-gap) + 1px);
+  border: none;
+  border-radius: var(--etc-pane-radius) 0 var(--etc-pane-radius) 0;
+  background-color: var(--background-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left, body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed), body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+    transition: none;
+  }
+}
