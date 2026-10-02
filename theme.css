@@ -24,8 +24,8 @@ settings:
     description: "Pick a base color scheme, then shape panes, transparency, borders and headings. Every *Scheme default* option follows whichever color scheme is active. Use the reset arrow next to any setting to hand it back to the scheme."
     markdown: true
   -
-    id: "etc-h-scheme"
-    title: "Color scheme"
+    id: "etc-h-c"
+    title: "Colors"
     type: "heading"
     level: 1
     collapsed: false
@@ -115,10 +115,16 @@ settings:
     default-light: "#ffe680"
     default-dark: "#5c4f14"
   -
+    id: "etc-h-i"
+    title: "Interface"
+    type: "heading"
+    level: 1
+    collapsed: true
+  -
     id: "etc-h-panes"
     title: "Panes"
     type: "heading"
-    level: 1
+    level: 2
     collapsed: true
   -
     id: "etc-left-pane"
@@ -132,21 +138,15 @@ settings:
       - label: "Elevated card"
         value: "etc-left-elevated"
   -
-    id: "etc-left-sidebar-color"
-    title: "Left sidebar color"
-    description: "Leave untouched to use the scheme's sidebar color. Text and icons switch between light and dark to stay readable."
-    type: "variable-themed-color"
-    format: "hex"
-    opacity: false
-    default-light: "#2f3235"
-    default-dark: "#2b2b2d"
-  -
     id: "etc-main-pane"
     title: "Main editor area"
+    description: "Scheme default is an elevated card in Griply and flat in the others."
     type: "class-select"
     allowEmpty: false
-    default: "etc-main-flat"
+    default: "etc-main-scheme"
     options:
+      - label: "Scheme default"
+        value: "etc-main-scheme"
       - label: "Flat"
         value: "etc-main-flat"
       - label: "Elevated card"
@@ -154,10 +154,13 @@ settings:
   -
     id: "etc-right-pane"
     title: "Right sidebar"
+    description: "Scheme default is an elevated card in Griply and flat in the others."
     type: "class-select"
     allowEmpty: false
-    default: "etc-right-flat"
+    default: "etc-right-scheme"
     options:
+      - label: "Scheme default"
+        value: "etc-right-scheme"
       - label: "Flat"
         value: "etc-right-flat"
       - label: "Elevated card"
@@ -166,7 +169,7 @@ settings:
     id: "etc-h-elevation"
     title: "Elevated cards"
     type: "heading"
-    level: 2
+    level: 3
     collapsed: true
   -
     id: "etc-pane-gap"
@@ -211,10 +214,202 @@ settings:
     default-light: "#f3f5f7"
     default-dark: "#1f1f21"
   -
+    id: "etc-h-sidebar"
+    title: "Sidebars & menus"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-left-sidebar-color"
+    title: "Left sidebar color"
+    description: "Leave untouched to use the scheme's sidebar color. Text and icons switch between light and dark to stay readable."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#2f3235"
+    default-dark: "#2b2b2d"
+  -
+    id: "nav-item-radius"
+    title: "Selection corner radius"
+    type: "variable-number-slider"
+    default: 6
+    min: 0
+    max: 14
+    step: 1
+    format: "px"
+  -
+    id: "nav-item-weight-active"
+    title: "Active file weight"
+    type: "variable-select"
+    default: "400"
+    options:
+      - label: "Regular"
+        value: "400"
+      - label: "Medium"
+        value: "500"
+      - label: "Semibold"
+        value: "600"
+      - label: "Bold"
+        value: "700"
+  -
+    id: "etc-folder-icons"
+    title: "Folder icons"
+    description: "An accent-colored folder glyph before each folder name."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-folder-icons-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-folder-icons-scheme"
+      - label: "Show"
+        value: "etc-folder-icons-on"
+      - label: "Hide"
+        value: "etc-folder-icons-off"
+  -
+    id: "etc-menu"
+    title: "Selected row in menus and pickers"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-menu-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-menu-scheme"
+      - label: "Accent tint"
+        value: "etc-menu-accent"
+      - label: "Grey"
+        value: "etc-menu-grey"
+  -
+    id: "etc-h-toolbar"
+    title: "Hover to reveal"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-reveal-ribbon"
+    title: "Ribbon: reveal on hover"
+    description: "The ribbon tucks away to a slim edge and slides out on hover. The ribbon must be turned on in Settings → Appearance."
+    type: "class-toggle"
+    default: true
+  -
+    id: "etc-reveal-left"
+    title: "Left sidebar: reveal on hover"
+    description: "While the left sidebar is closed, hovering the window's left edge slides it out over the editor. An open sidebar stays as it is. With the ribbon also set to reveal, both share one edge and slide out together."
+    type: "class-toggle"
+    default: true
+  -
+    id: "etc-reveal-right"
+    title: "Right sidebar: reveal on hover"
+    description: "While the right sidebar is closed, hovering the window's right edge slides it out over the editor. An open sidebar stays as it is."
+    type: "class-toggle"
+    default: true
+  -
+    id: "etc-reveal-header"
+    title: "Note header and tabs: reveal on hover"
+    description: "The tab bar and the note's header (back, title, actions) tuck away above the note and slide down when you hover the top of it. While on, the window can't be dragged by them on macOS; drag it by a sidebar's top edge."
+    type: "class-toggle"
+    default: true
+  -
+    id: "etc-reveal-status"
+    title: "Status bar: reveal on hover"
+    description: "The status bar stays invisible until you hover where it sits. Hidden in the Status bar settings wins over this."
+    type: "class-toggle"
+    default: true
+  -
+    id: "etc-vault-bar-fade"
+    title: "Vault, Help and Settings bar: reveal on hover"
+    description: "The bar at the bottom of the left sidebar stays in place but invisible until hovered."
+    type: "class-toggle"
+    default: true
+  -
+    id: "etc-reveal-strip"
+    title: "Edge width"
+    description: "The hover edge left for the ribbon and closed sidebars. The note header and status bar always keep at least 8px to hover."
+    type: "variable-number-slider"
+    default: 2
+    min: 2
+    max: 24
+    step: 1
+    format: "px"
+  -
+    id: "etc-reveal-open-delay"
+    title: "Open delay"
+    description: "How long the pointer rests on an edge before the ribbon or a sidebar slides out. Stops accidental openings."
+    type: "variable-number-slider"
+    default: 0
+    min: 0
+    max: 1000
+    step: 25
+    format: "ms"
+  -
+    id: "etc-reveal-close-delay"
+    title: "Close delay"
+    description: "How long things stay out after the pointer leaves."
+    type: "variable-number-slider"
+    default: 0
+    min: 0
+    max: 1500
+    step: 25
+    format: "ms"
+  -
+    id: "etc-reveal-width"
+    title: "Revealed sidebar width"
+    description: "Width of a closed sidebar while it is slid out."
+    type: "variable-number-slider"
+    default: 300
+    min: 180
+    max: 600
+    step: 10
+    format: "px"
+  -
+    id: "etc-h-toolbars"
+    title: "Sidebar toolbars"
+    type: "heading"
+    level: 3
+    collapsed: true
+  -
+    id: "etc-toolbar-always"
+    title: "Always show sidebar toolbars"
+    description: "By default each sidebar toolbar shrinks to a faint ellipsis until hovered."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-toolbar-glyph"
+    title: "Collapsed glyph"
+    type: "variable-text"
+    default: "⋯"
+    quotes: true
+  -
+    id: "etc-toolbar-height"
+    title: "Collapsed height"
+    type: "variable-number-slider"
+    default: 14
+    min: 6
+    max: 30
+    step: 1
+    format: "px"
+  -
+    id: "etc-toolbar-duration"
+    title: "Animation duration"
+    type: "variable-number-slider"
+    default: 240
+    min: 0
+    max: 800
+    step: 20
+    format: "ms"
+  -
+    id: "etc-toolbar-close-delay"
+    title: "Close delay"
+    type: "variable-number-slider"
+    default: 150
+    min: 0
+    max: 1000
+    step: 25
+    format: "ms"
+  -
     id: "etc-h-glass"
     title: "Transparency"
     type: "heading"
-    level: 1
+    level: 2
     collapsed: true
   -
     id: "etc-glass-info"
@@ -242,7 +437,7 @@ settings:
   -
     id: "etc-glass-opacity-light"
     title: "Tint strength (light mode)"
-    description: "0 is pure glass, 100 is opaque."
+    description: "0 is pure glass, 100 is opaque. Bear defaults to 100."
     type: "variable-number-slider"
     default: 35
     min: 0
@@ -252,7 +447,7 @@ settings:
   -
     id: "etc-glass-opacity-dark"
     title: "Tint strength (dark mode)"
-    description: "0 is pure glass, 100 is opaque."
+    description: "0 is pure glass, 100 is opaque. Bear defaults to 100, Griply to 90."
     type: "variable-number-slider"
     default: 45
     min: 0
@@ -280,9 +475,9 @@ settings:
     format: "%"
   -
     id: "etc-h-borders"
-    title: "UI borders"
+    title: "Borders"
     type: "heading"
-    level: 1
+    level: 2
     collapsed: true
   -
     id: "etc-ui-border"
@@ -316,10 +511,72 @@ settings:
     type: "class-toggle"
     default: false
   -
+    id: "etc-h-status"
+    title: "Status bar"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-status-style"
+    title: "Style"
+    description: "Scheme default is a floating pill in Apple Notes and Griply and docked in the others."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-status-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-status-scheme"
+      - label: "Docked"
+        value: "etc-status-docked"
+      - label: "Floating pill"
+        value: "etc-status-floating"
+  -
+    id: "etc-status-position"
+    title: "Position"
+    description: "Bottom center sits at the middle of the window."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-status-center"
+    options:
+      - label: "Bottom center"
+        value: "etc-status-center"
+      - label: "Bottom right"
+        value: "etc-status-right"
+  -
+    id: "etc-status-visibility"
+    title: "Visibility"
+    description: "To show it only on hover, see Hover to reveal."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-status-show"
+    options:
+      - label: "Always show"
+        value: "etc-status-show"
+      - label: "Hidden"
+        value: "etc-status-hide"
+  -
+    id: "etc-h-settings-window"
+    title: "Settings window"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-settings-plain"
+    title: "Keep Obsidian's own settings window"
+    description: "By default the settings window follows the main window: its sidebar matches the left sidebar and its pages match the editor, including color, borders and elevated cards. It stays opaque even with the translucent window."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-h-e"
+    title: "Editor"
+    type: "heading"
+    level: 1
+    collapsed: true
+  -
     id: "etc-h-type"
     title: "Typography & layout"
     type: "heading"
-    level: 1
+    level: 2
     collapsed: true
   -
     id: "etc-type-info"
@@ -357,7 +614,7 @@ settings:
     id: "etc-h-headings"
     title: "Headings"
     type: "heading"
-    level: 1
+    level: 2
     collapsed: true
   -
     id: "etc-headings-info"
@@ -479,7 +736,7 @@ settings:
     id: "etc-h-dividers"
     title: "Dividers under headings"
     type: "heading"
-    level: 2
+    level: 3
     collapsed: true
   -
     id: "etc-hd"
@@ -550,7 +807,7 @@ settings:
     id: "etc-h-title"
     title: "Note title"
     type: "heading"
-    level: 2
+    level: 3
     collapsed: true
   -
     id: "inline-title-color"
@@ -605,7 +862,7 @@ settings:
     id: "etc-h-h1"
     title: "H1"
     type: "heading"
-    level: 2
+    level: 3
     collapsed: true
   -
     id: "etc-h1-color"
@@ -698,7 +955,7 @@ settings:
     id: "etc-h-h2"
     title: "H2"
     type: "heading"
-    level: 2
+    level: 3
     collapsed: true
   -
     id: "etc-h2-color"
@@ -791,7 +1048,7 @@ settings:
     id: "etc-h-h3"
     title: "H3"
     type: "heading"
-    level: 2
+    level: 3
     collapsed: true
   -
     id: "etc-h3-color"
@@ -884,7 +1141,7 @@ settings:
     id: "etc-h-h4"
     title: "H4"
     type: "heading"
-    level: 2
+    level: 3
     collapsed: true
   -
     id: "etc-h4-color"
@@ -977,7 +1234,7 @@ settings:
     id: "etc-h-h5"
     title: "H5"
     type: "heading"
-    level: 2
+    level: 3
     collapsed: true
   -
     id: "etc-h5-color"
@@ -1070,7 +1327,7 @@ settings:
     id: "etc-h-h6"
     title: "H6"
     type: "heading"
-    level: 2
+    level: 3
     collapsed: true
   -
     id: "etc-h6-color"
@@ -1160,10 +1417,10 @@ settings:
       - label: "Italic"
         value: "italic"
   -
-    id: "etc-h-editor"
-    title: "Editor details"
+    id: "etc-h-lists"
+    title: "Lists & tasks"
     type: "heading"
-    level: 1
+    level: 2
     collapsed: true
   -
     id: "etc-checkbox"
@@ -1196,11 +1453,114 @@ settings:
       - label: "Leave as is"
         value: "etc-done-plain"
   -
-    id: "etc-no-priority"
-    title: "Plain priority checkboxes"
-    description: "By default [!] tasks get a red checkbox and [>] / [<] an orange one."
-    type: "class-toggle"
-    default: false
+    id: "etc-alt-tasks"
+    title: "Alternate checkboxes"
+    description: "Tasks like [/], [-], [?], [!], [*] or [I]. Icons gives each its own colored icon; [/] shows a half-filled box and [-] a crossed-out box with the task struck through."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-alt-tasks-icons"
+    options:
+      - label: "Icons"
+        value: "etc-alt-tasks-icons"
+      - label: "Plain checked boxes (Obsidian default)"
+        value: "etc-alt-tasks-plain"
+  -
+    id: "etc-checkbox-color"
+    title: "Checkbox color"
+    description: "Defaults to the accent color."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#2363b8"
+    default-dark: "#6796e1"
+  -
+    id: "etc-bullets"
+    title: "Nested bullets"
+    description: "Hollow draws every other nested level as an outlined circle."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-bullets-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-bullets-scheme"
+      - label: "Hollow"
+        value: "etc-bullets-hollow"
+      - label: "Filled"
+        value: "etc-bullets-filled"
+  -
+    id: "list-marker-color"
+    title: "Bullet color"
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#b1b3b2"
+    default-dark: "#6e6e6e"
+  -
+    id: "list-spacing"
+    title: "Space between list items"
+    type: "variable-number-slider"
+    default: 0.075
+    min: 0
+    max: 0.6
+    step: 0.025
+    format: "em"
+  -
+    id: "list-numbered-style"
+    title: "Numbered list style"
+    description: "Reading view only. Live Preview shows the numbers as typed."
+    type: "variable-select"
+    default: "decimal"
+    options:
+      - label: "1, 2, 3"
+        value: "decimal"
+      - label: "01, 02, 03"
+        value: "decimal-leading-zero"
+      - label: "a, b, c"
+        value: "lower-alpha"
+      - label: "A, B, C"
+        value: "upper-alpha"
+      - label: "i, ii, iii"
+        value: "lower-roman"
+      - label: "I, II, III"
+        value: "upper-roman"
+  -
+    id: "indentation-guide-width"
+    title: "Indentation guide thickness"
+    description: "0 hides the guides. Also applies to the file explorer."
+    type: "variable-number-slider"
+    default: 1
+    min: 0
+    max: 4
+    step: 0.5
+    format: "px"
+  -
+    id: "indentation-guide-color"
+    title: "Indentation guide color"
+    description: "Also applies to the file explorer."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: true
+    default-light: "#e0e0e0"
+    default-dark: "#3a3a3a"
+  -
+    id: "etc-h-tags"
+    title: "Tags & links"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-links"
+    title: "Links"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-links-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-links-scheme"
+      - label: "Underlined"
+        value: "etc-links-underline"
+      - label: "No underline"
+        value: "etc-links-plain"
   -
     id: "etc-tags"
     title: "Tags"
@@ -1217,175 +1577,210 @@ settings:
       - label: "Plain text"
         value: "etc-tags-plain"
   -
-    id: "etc-links"
-    title: "Links"
+    id: "etc-tag-shape"
+    title: "Shape"
     type: "class-select"
     allowEmpty: false
-    default: "etc-links-scheme"
+    default: "etc-tag-shape-scheme"
     options:
-      - label: "Scheme default"
-        value: "etc-links-scheme"
-      - label: "Underlined"
-        value: "etc-links-underline"
-      - label: "No underline"
-        value: "etc-links-plain"
+      - label: "Follow tag style"
+        value: "etc-tag-shape-scheme"
+      - label: "Pill"
+        value: "etc-tag-shape-pill"
+      - label: "Rounded"
+        value: "etc-tag-shape-rounded"
+      - label: "Square"
+        value: "etc-tag-shape-square"
   -
-    id: "etc-bullets"
-    title: "Nested bullets"
-    description: "Hollow draws every other nested level as an outlined circle."
-    type: "class-select"
-    allowEmpty: false
-    default: "etc-bullets-scheme"
-    options:
-      - label: "Scheme default"
-        value: "etc-bullets-scheme"
-      - label: "Hollow"
-        value: "etc-bullets-hollow"
-      - label: "Filled"
-        value: "etc-bullets-filled"
+    id: "etc-tag-color"
+    title: "Text color"
+    description: "Leave untouched to follow the tag style."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: false
+    default-light: "#2b7457"
+    default-dark: "#ffffff"
   -
-    id: "etc-h-sidebar"
-    title: "Sidebar & menus"
-    type: "heading"
-    level: 1
-    collapsed: true
+    id: "etc-tag-background"
+    title: "Background"
+    description: "Leave untouched to follow the tag style."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: true
+    default-light: "#c4e1d3"
+    default-dark: "#2c6b51"
   -
-    id: "nav-item-radius"
-    title: "Selection corner radius"
+    id: "etc-tag-border-color"
+    title: "Border color"
+    description: "Leave untouched to follow the tag style. Needs a border thickness above 0."
+    type: "variable-themed-color"
+    format: "hex"
+    opacity: true
+    default-light: "#ececec"
+    default-dark: "#414141"
+  -
+    id: "etc-tag-border-width"
+    title: "Border thickness"
+    description: "Leave untouched to follow the tag style."
     type: "variable-number-slider"
-    default: 6
+    default: 0
     min: 0
-    max: 14
-    step: 1
+    max: 3
+    step: 0.5
     format: "px"
   -
-    id: "nav-item-weight-active"
-    title: "Active file weight"
-    type: "variable-select"
-    default: "400"
-    options:
-      - label: "Regular"
-        value: "400"
-      - label: "Medium"
-        value: "500"
-      - label: "Semibold"
-        value: "600"
-      - label: "Bold"
-        value: "700"
-  -
-    id: "etc-folder-icons"
-    title: "Folder icons"
-    description: "An accent-colored folder glyph before each folder name."
-    type: "class-select"
-    allowEmpty: false
-    default: "etc-folder-icons-scheme"
-    options:
-      - label: "Scheme default"
-        value: "etc-folder-icons-scheme"
-      - label: "Show"
-        value: "etc-folder-icons-on"
-      - label: "Hide"
-        value: "etc-folder-icons-off"
-  -
-    id: "etc-menu"
-    title: "Selected row in menus and pickers"
-    type: "class-select"
-    allowEmpty: false
-    default: "etc-menu-scheme"
-    options:
-      - label: "Scheme default"
-        value: "etc-menu-scheme"
-      - label: "Accent tint"
-        value: "etc-menu-accent"
-      - label: "Grey"
-        value: "etc-menu-grey"
-  -
-    id: "etc-h-toolbar"
-    title: "Hover to reveal"
+    id: "etc-h-callouts"
+    title: "Callouts"
     type: "heading"
     level: 2
     collapsed: true
   -
-    id: "etc-toolbar-always"
-    title: "Always show sidebar toolbars"
-    description: "By default each sidebar toolbar shrinks to a faint ellipsis until hovered."
-    type: "class-toggle"
-    default: false
-  -
-    id: "etc-vault-bar"
-    title: "Vault, Help and Settings bar"
-    description: "The bar at the bottom of the left sidebar."
+    id: "etc-callouts"
+    title: "Callout style"
+    description: "Callout colors follow the scheme's red, orange, blue and so on."
     type: "class-select"
     allowEmpty: false
-    default: "etc-vault-bar-show"
+    default: "etc-callouts-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-callouts-scheme"
+      - label: "Tinted"
+        value: "etc-callouts-tinted"
+      - label: "Outlined"
+        value: "etc-callouts-outlined"
+      - label: "Side bar"
+        value: "etc-callouts-bar"
+      - label: "Minimal (no box)"
+        value: "etc-callouts-minimal"
+  -
+    id: "callout-radius"
+    title: "Corner radius"
+    type: "variable-number-slider"
+    default: 4
+    min: 0
+    max: 16
+    step: 1
+    format: "px"
+  -
+    id: "etc-h-properties"
+    title: "Properties"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-props"
+    title: "Properties style"
+    description: "Scheme default is a card in Griply and plain in the others."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-props-scheme"
+    options:
+      - label: "Scheme default"
+        value: "etc-props-scheme"
+      - label: "Plain"
+        value: "etc-props-plain"
+      - label: "Card"
+        value: "etc-props-card"
+      - label: "Rules above and below"
+        value: "etc-props-rules"
+  -
+    id: "etc-props-add"
+    title: "Add property button"
+    description: "When hidden, use the Add file property command instead."
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-props-add-show"
     options:
       - label: "Always show"
-        value: "etc-vault-bar-show"
-      - label: "Fade in on hover"
-        value: "etc-vault-bar-fade"
-      - label: "Collapse until hovered"
-        value: "etc-vault-bar-collapse"
+        value: "etc-props-add-show"
+      - label: "Show on hover"
+        value: "etc-props-add-hover"
+      - label: "Hidden"
+        value: "etc-props-add-hide"
   -
-    id: "etc-reveal-ribbon"
-    title: "Ribbon: reveal on hover"
-    description: "The ribbon tucks away to a slim edge and slides out on hover. The ribbon must be turned on in Settings → Appearance."
+    id: "etc-props-no-heading"
+    title: "Hide the Properties heading"
+    description: "The heading still shows while properties are folded, so you can unfold them."
     type: "class-toggle"
     default: false
   -
-    id: "etc-reveal-left"
-    title: "Left sidebar: reveal on hover"
-    description: "While open, the left sidebar tucks away to a slim edge and slides out over the editor on hover."
+    id: "etc-props-icons-hover"
+    title: "Show property icons only on hover"
     type: "class-toggle"
     default: false
   -
-    id: "etc-reveal-right"
-    title: "Right sidebar: reveal on hover"
-    description: "While open, the right sidebar tucks away to a slim edge and slides out over the editor on hover."
+    id: "etc-props-compact"
+    title: "Compact rows"
     type: "class-toggle"
     default: false
   -
-    id: "etc-reveal-strip"
-    title: "Edge width"
-    description: "The hover edge left showing for the ribbon and sidebars."
+    id: "metadata-label-width"
+    title: "Property name width"
     type: "variable-number-slider"
-    default: 8
-    min: 2
-    max: 24
-    step: 1
-    format: "px"
+    default: 9
+    min: 5
+    max: 16
+    step: 0.5
+    format: "em"
   -
-    id: "etc-toolbar-glyph"
-    title: "Collapsed glyph"
-    type: "variable-text"
-    default: "⋯"
-    quotes: true
+    id: "etc-h-tables"
+    title: "Tables"
+    type: "heading"
+    level: 2
+    collapsed: true
   -
-    id: "etc-toolbar-height"
-    title: "Collapsed height"
-    type: "variable-number-slider"
-    default: 14
-    min: 6
-    max: 30
-    step: 1
-    format: "px"
+    id: "etc-table-lines"
+    title: "Lines"
+    type: "class-select"
+    allowEmpty: false
+    default: "etc-table-lines-grid"
+    options:
+      - label: "Grid"
+        value: "etc-table-lines-grid"
+      - label: "Rows only"
+        value: "etc-table-lines-rows"
+      - label: "Under the header only"
+        value: "etc-table-lines-header"
+      - label: "None"
+        value: "etc-table-lines-none"
   -
-    id: "etc-toolbar-duration"
-    title: "Animation duration"
-    type: "variable-number-slider"
-    default: 240
-    min: 0
-    max: 800
-    step: 20
-    format: "ms"
+    id: "etc-table-header-shade"
+    title: "Shaded header row"
+    type: "class-toggle"
+    default: false
   -
-    id: "etc-toolbar-close-delay"
-    title: "Close delay"
-    type: "variable-number-slider"
-    default: 150
-    min: 0
-    max: 1000
-    step: 25
-    format: "ms"
+    id: "etc-table-zebra"
+    title: "Alternating row background"
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-table-row-hover"
+    title: "Highlight the row under the pointer"
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-table-tabular"
+    title: "Tabular figures"
+    description: "Digits share one width so numbers line up in columns."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-table-full"
+    title: "Stretch tables to the line width"
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-h-diagrams"
+    title: "Diagrams"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-mermaid-plain"
+    title: "Use Mermaid's own colors"
+    description: "By default flowcharts, sequence diagrams, Gantt charts and pie charts take the color scheme's colors in light and dark mode. Turn on for Mermaid's default palette (inverted in dark mode)."
+    type: "class-toggle"
+    default: false
 */
 
 /* ---------- 1. Neutral defaults ---------- */
@@ -1406,12 +1801,18 @@ body {
   --etc-toolbar-size: 24px;
   --etc-toolbar-height: 14px;
   --etc-toolbar-open-height: 40px;
-  --etc-vault-bar-open-height: 64px;
   --etc-toolbar-duration: 240ms;
   --etc-toolbar-close-delay: 150ms;
   --etc-toolbar-ease: cubic-bezier(0.2, 0, 0, 1);
-  --etc-reveal-strip: 8px;
+  --etc-reveal-strip: 2px;
+  --etc-reveal-hit: max(var(--etc-reveal-strip), 8px);
+  --etc-reveal-open-delay: 0ms;
+  --etc-reveal-close-delay: 0ms;
+  --etc-reveal-width: 300px;
   --etc-ribbon-footprint: var(--ribbon-width);
+  --etc-status-inset: calc(var(--etc-pane-gap) + 6px);
+  --etc-table-col-lines: var(--table-border-width);
+  --etc-table-row-lines: var(--table-border-width);
 }
 
 :is(.theme-light, .theme-dark) {
@@ -1456,14 +1857,21 @@ body {
   --etc-glass-tint: var(--background-secondary);
   --etc-window-bg: var(--background-secondary);
   --nav-item-radius: 6px;
+
+  /* Callouts: Obsidian's tinted box unless a scheme or option says otherwise */
+  --etc-callout-fill: 10%;
+  --etc-callout-bar: 0px;
+  --etc-callout-bar-opacity: var(--callout-border-opacity);
 }
 .theme-light {
+  --etc-task-yellow: color-mix(in oklch, var(--color-yellow), black 22%);
   --etc-reveal-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 10px 32px rgba(0, 0, 0, 0.14);
   --etc-accent-hover: hsl(var(--accent-h), var(--accent-s), calc(var(--accent-l) * 0.85));
   --etc-pane-shadow: 0 1px 3px rgba(0, 0, 0, calc(0.05 * var(--etc-pane-shadow-strength))),
     0 6px 20px rgba(0, 0, 0, calc(0.03 * var(--etc-pane-shadow-strength)));
 }
 .theme-dark {
+  --etc-task-yellow: var(--color-yellow);
   --etc-reveal-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 10px 32px rgba(0, 0, 0, 0.5);
   --etc-accent-hover: hsl(var(--accent-h), var(--accent-s), calc(var(--accent-l) * 1.15));
   --etc-pane-shadow: 0 1px 2px rgba(0, 0, 0, calc(0.3 * var(--etc-pane-shadow-strength))),
@@ -1513,6 +1921,9 @@ body {
   --etc-p-menu-selection: var(--background-modifier-active-hover);
   --etc-p-h1-weight: 700;
   --etc-p-h1-divider: 1;
+
+  --callout-radius: 8px;
+  --etc-callout-fill: 8%;
 }
 .theme-light:where(:not(.etc-scheme-apple-notes, .etc-scheme-bear, .etc-scheme-griply, .etc-scheme-obsidian)) {
   --accent-h: 214;
@@ -1696,6 +2107,10 @@ body {
   --nav-item-radius: 8px;
   --nav-item-weight-active: 600;
   --etc-p-menu-selection: var(--nav-item-background-active);
+
+  --etc-callout-fill: 6%;
+  --etc-callout-bar: 3px;
+  --etc-callout-bar-opacity: 1;
 }
 .theme-light:where(.etc-scheme-apple-notes) {
   --accent-h: 211;
@@ -1854,6 +2269,14 @@ body {
   --etc-p-h6-tracking: -0.005em;
   --nav-item-radius: 6px;
   --etc-p-menu-selection: var(--background-modifier-active-hover);
+
+  --etc-callout-fill: 6%;
+  --etc-callout-bar: 3px;
+  --etc-callout-bar-opacity: 1;
+
+  /* Bear keeps an opaque tint over the translucent window */
+  --etc-glass-opacity-light: 100%;
+  --etc-glass-opacity-dark: 100%;
 }
 .theme-light:where(.etc-scheme-bear) {
   --etc-p-left-sidebar: #2f3235;
@@ -1993,6 +2416,13 @@ body {
   --etc-p-h4-color: var(--text-normal);
   --etc-p-h5-color: var(--text-muted);
   --etc-p-h6-color: var(--text-muted);
+
+  --callout-radius: 8px;
+  --callout-border-width: 1px;
+  --callout-border-opacity: 0.35;
+  --etc-callout-fill: 3%;
+
+  --etc-glass-opacity-dark: 90%;
 }
 .theme-light:where(.etc-scheme-griply) {
   --color-red-rgb: 218, 38, 42;
@@ -2119,12 +2549,25 @@ body {
   --text-accent-hover: var(--etc-accent-hover);
   --interactive-accent: var(--color-accent);
   --interactive-accent-hover: var(--etc-accent-hover);
-  --checkbox-color: var(--color-accent);
-  --checkbox-color-hover: var(--etc-accent-hover);
+  --checkbox-color: var(--etc-checkbox-color, var(--color-accent));
+  --checkbox-color-hover: var(--etc-checkbox-color, var(--etc-accent-hover));
   --text-on-accent: #ffffff;
   --titlebar-background-focused: var(--titlebar-background);
+  --indentation-guide-width-active: var(--indentation-guide-width);
 
   --etc-ui-border-color: var(--etc-ui-border, var(--background-modifier-border));
+
+  /* Tag overrides resolve here against the active tag style (hover states
+     included), then reach every tag through body's children; see section 9 */
+  --etc-tag-fg: var(--etc-tag-color, var(--tag-color));
+  --etc-tag-fg-hover: var(--etc-tag-color, var(--tag-color-hover));
+  --etc-tag-bg: var(--etc-tag-background, var(--tag-background));
+  /* Invalid (so the fallback wins) unless a background is set */
+  --etc-tag-bg-custom-hover: color-mix(in oklch, var(--etc-tag-background), var(--text-normal) 8%);
+  --etc-tag-bg-hover: var(--etc-tag-bg-custom-hover, var(--tag-background-hover));
+  --etc-tag-bd: var(--etc-tag-border-color, var(--tag-border-color));
+  --etc-tag-bd-hover: var(--etc-tag-border-color, var(--tag-border-color-hover));
+  --etc-tag-bw: var(--etc-tag-border-width, var(--tag-border-width));
 
   /* Heading chain: level override → general setting → scheme */
   --h1-size: var(--etc-h1-size, calc(var(--etc-p-h1-size) * var(--etc-heading-scale)));
@@ -2227,6 +2670,10 @@ body.etc-tags-plain {
   --tag-color: var(--text-accent);
   --tag-color-hover: var(--text-accent-hover);
 }
+/* Shape comes after style so it wins */
+body.etc-tag-shape-pill { --tag-radius: 999px; }
+body.etc-tag-shape-rounded { --tag-radius: 6px; }
+body.etc-tag-shape-square { --tag-radius: 2px; }
 
 /* ---------- Links ---------- */
 body.etc-links-underline {
@@ -2329,6 +2776,85 @@ body.etc-h6-case-smallcaps { --etc-h6-transform: none; --etc-h6-variant: small-c
 body.etc-pane-no-outline { --etc-card-outline-width: 0px; }
 body.etc-left-elevated { --etc-window-bg: var(--background-secondary-alt); }
 
+/* ---------- Callouts ---------- */
+body:is(.etc-callouts-tinted, .etc-callouts-outlined, .etc-callouts-bar) {
+  --callout-padding: var(--size-4-3) var(--size-4-3) var(--size-4-3) var(--size-4-6);
+}
+body.etc-callouts-tinted {
+  --callout-border-width: 0px;
+  --etc-callout-fill: 10%;
+  --etc-callout-bar: 0px;
+}
+body.etc-callouts-outlined {
+  --callout-border-width: 1px;
+  --callout-border-opacity: 0.35;
+  --etc-callout-fill: 3%;
+  --etc-callout-bar: 0px;
+  --etc-callout-bar-opacity: 0.35;
+}
+body.etc-callouts-bar {
+  --callout-border-width: 0px;
+  --etc-callout-fill: 6%;
+  --etc-callout-bar: 3px;
+  --etc-callout-bar-opacity: 1;
+}
+body.etc-callouts-minimal {
+  --callout-border-width: 0px;
+  --callout-padding: var(--size-4-2) 0;
+  --etc-callout-fill: 0%;
+  --etc-callout-bar: 0px;
+}
+
+/* ---------- Properties ---------- */
+body:is(.etc-props-card, .etc-scheme-griply:where(:not(.etc-props-plain, .etc-props-rules))) {
+  --metadata-background: var(--background-primary-alt);
+  --metadata-border-width: 1px;
+  --metadata-border-color: var(--background-modifier-border);
+  --metadata-border-radius: 8px;
+  --metadata-padding: var(--size-4-2) var(--size-4-3);
+}
+body.etc-props-rules {
+  --metadata-border-width: 1px 0;
+  --metadata-border-color: var(--background-modifier-border);
+  --metadata-border-radius: 0;
+  --metadata-padding: var(--size-4-3) 0;
+}
+body.etc-props-compact {
+  --metadata-gap: 0px;
+  --metadata-input-height: calc(var(--font-text-size) * 1.45);
+}
+
+/* ---------- Tables ---------- */
+body.etc-table-lines-rows {
+  --etc-table-col-lines: 0px;
+  --table-column-first-border-width: 0px;
+  --table-column-last-border-width: 0px;
+}
+body.etc-table-lines-header {
+  --etc-table-col-lines: 0px;
+  --etc-table-row-lines: 0px;
+  --table-column-first-border-width: 0px;
+  --table-column-last-border-width: 0px;
+  --table-header-border-width: 0px;
+  --table-row-last-border-width: 0px;
+}
+body.etc-table-lines-none {
+  --table-border-width: 0px;
+}
+body.etc-table-header-shade {
+  --table-header-background: color-mix(in oklch, var(--text-normal) 5%, transparent);
+  --table-header-background-hover: color-mix(in oklch, var(--text-normal) 5%, transparent);
+}
+body.etc-table-zebra {
+  --table-row-alt-background: color-mix(in oklch, var(--text-normal) 3%, transparent);
+  --table-row-alt-background-hover: color-mix(in oklch, var(--text-normal) 3%, transparent);
+}
+/* After zebra so a hovered striped row still lights up */
+body.etc-table-row-hover {
+  --table-row-background-hover: color-mix(in oklch, var(--color-accent) 8%, transparent);
+  --table-row-alt-background-hover: color-mix(in oklch, var(--color-accent) 8%, transparent);
+}
+
 /* ==========================================================================
    5. Headings
    ========================================================================== */
@@ -2394,18 +2920,18 @@ body.etc-inline-title-divider .inline-title {
    ========================================================================== */
 
 /* ---------- Window behind the cards ---------- */
-body:is(.etc-left-elevated, .etc-main-elevated, .etc-right-elevated):not(.is-translucent) .workspace {
+body:is(.etc-left-elevated, :is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))), :is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat)))):not(.is-translucent) .workspace {
   background-color: var(--etc-window-bg);
 }
 /* Divider lines give way to the gaps between cards */
-body:is(.etc-main-elevated, .etc-right-elevated) .workspace {
+body:is(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))), :is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat)))) .workspace {
   --etc-divider: transparent;
 }
 
 /* ---------- Shared card look ---------- */
 body.etc-left-elevated .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed),
-body.etc-main-elevated .workspace > .workspace-split.mod-root,
-body.etc-right-elevated .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))) .workspace > .workspace-split.mod-root,
+body:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat))) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
   --etc-card-bg: var(--etc-card-surface);
   box-sizing: border-box;
   height: auto;
@@ -2422,13 +2948,13 @@ body.etc-left-elevated .workspace > .workspace-split.mod-left-split:not(.is-side
   --etc-card-surface: var(--background-secondary);
   margin: var(--etc-pane-gap) 0 var(--etc-pane-gap) var(--etc-pane-gap);
 }
-body.etc-left-elevated:not(.etc-main-elevated) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed) {
+body.etc-left-elevated:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed) {
   margin-right: var(--etc-pane-gap);
 }
 
 /* Main and right cards use the editor color throughout */
-body.etc-main-elevated .workspace > .workspace-split.mod-root,
-body.etc-right-elevated .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))) .workspace > .workspace-split.mod-root,
+body:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat))) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
   --background-secondary: var(--background-primary);
   --tab-container-background: var(--background-primary);
   --etc-card-surface: var(--background-primary);
@@ -2436,27 +2962,26 @@ body.etc-right-elevated .workspace > .workspace-split.mod-right-split:not(.is-si
 }
 
 /* Main card needs its own left gap when nothing flat sits beside it */
-body.etc-main-elevated.etc-left-elevated .workspace > .workspace-split.mod-root,
-body.etc-main-elevated.etc-reveal-left .workspace > .workspace-split.mod-root,
-body.etc-main-elevated .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed + .workspace-split.mod-root,
-body.etc-main-elevated .workspace > .workspace-ribbon.mod-left + .workspace-split.mod-root {
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))).etc-left-elevated .workspace > .workspace-split.mod-root,
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed + .workspace-split.mod-root,
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))) .workspace > .workspace-ribbon.mod-left + .workspace-split.mod-root {
   margin-left: var(--etc-pane-gap);
 }
 /* Right card next to a flat editor needs its own left gap */
-body.etc-right-elevated:not(.etc-main-elevated) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+body:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat))):not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
   margin-left: var(--etc-pane-gap);
 }
 
 /* Right card's tab strip and panes inherit the card color */
-body.etc-right-elevated .workspace-split.mod-right-split .workspace-tab-header-container,
-body.etc-right-elevated .workspace-split.mod-right-split .workspace-tabs,
-body.etc-right-elevated .workspace-split.mod-right-split .view-content {
+body:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat))) .workspace-split.mod-right-split .workspace-tab-header-container,
+body:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat))) .workspace-split.mod-right-split .workspace-tabs,
+body:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat))) .workspace-split.mod-right-split .view-content {
   background-color: transparent;
 }
 
 /* Right sidebar toggle (macOS) moves inside the card's corner */
-:is(body.etc-right-elevated:not(.etc-reveal-right):has(.workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed)),
-body.etc-main-elevated:has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed)).mod-macos.is-hidden-frameless:not(.is-popout-window) .sidebar-toggle-button.mod-right {
+:is(body:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat))):has(.workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed)),
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))):has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed)).mod-macos.is-hidden-frameless:not(.is-popout-window) .sidebar-toggle-button.mod-right {
   top: calc(var(--etc-pane-gap) + 1px);
   right: calc(var(--etc-pane-gap) + 1px);
   border-top-right-radius: var(--etc-pane-radius);
@@ -2464,8 +2989,8 @@ body.etc-main-elevated:has(.workspace > .workspace-split.mod-right-split.is-side
 }
 
 /* Status bar tucks into the bottom-right corner of the card under it */
-:is(body.etc-right-elevated:not(.etc-reveal-right):has(.workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed)),
-body.etc-main-elevated:has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed)) .status-bar {
+:is(body:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat))):has(.workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed)),
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))):has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed)) .status-bar {
   right: calc(var(--etc-pane-gap) + 1px);
   bottom: calc(var(--etc-pane-gap) + 1px);
   border: none;
@@ -2480,7 +3005,8 @@ body {
   --etc-ls-probe: var(--etc-left-sidebar-color, var(--etc-p-left-sidebar, none));
 }
 @container not style(--etc-ls-probe: none) {
-  :is(.workspace-split.mod-left-split, .workspace-ribbon.mod-left) {
+  :is(.workspace-split.mod-left-split, .workspace-ribbon.mod-left),
+  body:not(.etc-settings-plain, .is-mobile) .modal.mod-settings .vertical-tab-header {
     --etc-ls: var(--etc-ls-probe);
     --background-secondary: var(--etc-ls);
     --background-secondary-alt: var(--etc-ls);
@@ -2677,20 +3203,349 @@ body:is(.etc-bullets-hollow, .etc-scheme-bear:not(.etc-bullets-filled)) :is(
   box-shadow: inset 0 0 0 1.5px var(--list-marker-color);
 }
 
-/* ---------- Priority checkboxes ---------- */
-body:not(.etc-no-priority) :is(
-  .markdown-rendered li[data-task="!"] > input[type="checkbox"],
-  .markdown-source-view .HyperMD-task-line[data-task="!"] input[type="checkbox"]
-) {
-  border-color: var(--color-red);
+/* ---------- Alternate checkboxes ----------
+   Obsidian checks a box for any character between the brackets. These draw
+   each common one as its own icon (Lucide, as bundled with Obsidian), plus a
+   half box for [/] and a crossed-out box for [-]. Reading view marks the
+   list item with data-task, Live Preview marks the checkbox itself. */
+body:not(.etc-alt-tasks-plain) :is(
+  input.task-list-item-checkbox[data-task=">"], li[data-task=">"] > input.task-list-item-checkbox, li[data-task=">"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="<"], li[data-task="<"] > input.task-list-item-checkbox, li[data-task="<"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="?"], li[data-task="?"] > input.task-list-item-checkbox, li[data-task="?"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="!"], li[data-task="!"] > input.task-list-item-checkbox, li[data-task="!"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="*"], li[data-task="*"] > input.task-list-item-checkbox, li[data-task="*"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="\""], li[data-task="\""] > input.task-list-item-checkbox, li[data-task="\""] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="l"], li[data-task="l"] > input.task-list-item-checkbox, li[data-task="l"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="b"], li[data-task="b"] > input.task-list-item-checkbox, li[data-task="b"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="i"], li[data-task="i"] > input.task-list-item-checkbox, li[data-task="i"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="S"], li[data-task="S"] > input.task-list-item-checkbox, li[data-task="S"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="I"], li[data-task="I"] > input.task-list-item-checkbox, li[data-task="I"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="p"], li[data-task="p"] > input.task-list-item-checkbox, li[data-task="p"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="c"], li[data-task="c"] > input.task-list-item-checkbox, li[data-task="c"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="f"], li[data-task="f"] > input.task-list-item-checkbox, li[data-task="f"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="k"], li[data-task="k"] > input.task-list-item-checkbox, li[data-task="k"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="w"], li[data-task="w"] > input.task-list-item-checkbox, li[data-task="w"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="u"], li[data-task="u"] > input.task-list-item-checkbox, li[data-task="u"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="d"], li[data-task="d"] > input.task-list-item-checkbox, li[data-task="d"] > p > input.task-list-item-checkbox
+):checked {
+  border-color: transparent;
+  background-color: transparent;
+  background-image: none;
 }
-body:not(.etc-no-priority) :is(
-  .markdown-rendered li[data-task=">"] > input[type="checkbox"],
-  .markdown-rendered li[data-task="<"] > input[type="checkbox"],
-  .markdown-source-view .HyperMD-task-line[data-task=">"] input[type="checkbox"],
-  .markdown-source-view .HyperMD-task-line[data-task="<"] input[type="checkbox"]
-) {
-  border-color: var(--color-orange);
+body:not(.etc-alt-tasks-plain) :is(
+  input.task-list-item-checkbox[data-task=">"], li[data-task=">"] > input.task-list-item-checkbox, li[data-task=">"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="<"], li[data-task="<"] > input.task-list-item-checkbox, li[data-task="<"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="?"], li[data-task="?"] > input.task-list-item-checkbox, li[data-task="?"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="!"], li[data-task="!"] > input.task-list-item-checkbox, li[data-task="!"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="*"], li[data-task="*"] > input.task-list-item-checkbox, li[data-task="*"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="\""], li[data-task="\""] > input.task-list-item-checkbox, li[data-task="\""] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="l"], li[data-task="l"] > input.task-list-item-checkbox, li[data-task="l"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="b"], li[data-task="b"] > input.task-list-item-checkbox, li[data-task="b"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="i"], li[data-task="i"] > input.task-list-item-checkbox, li[data-task="i"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="S"], li[data-task="S"] > input.task-list-item-checkbox, li[data-task="S"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="I"], li[data-task="I"] > input.task-list-item-checkbox, li[data-task="I"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="p"], li[data-task="p"] > input.task-list-item-checkbox, li[data-task="p"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="c"], li[data-task="c"] > input.task-list-item-checkbox, li[data-task="c"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="f"], li[data-task="f"] > input.task-list-item-checkbox, li[data-task="f"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="k"], li[data-task="k"] > input.task-list-item-checkbox, li[data-task="k"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="w"], li[data-task="w"] > input.task-list-item-checkbox, li[data-task="w"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="u"], li[data-task="u"] > input.task-list-item-checkbox, li[data-task="u"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="d"], li[data-task="d"] > input.task-list-item-checkbox, li[data-task="d"] > p > input.task-list-item-checkbox
+):checked::after {
+  top: -1px;
+  inset-inline-start: -1px;
+  background-color: var(--etc-task-color);
+  -webkit-mask-image: var(--etc-task-icon);
+  -webkit-mask-size: 100%;
+  -webkit-mask-position: center;
+  transition: opacity 0.15s ease;
+}
+body:not(.etc-alt-tasks-plain) :is(
+  input.task-list-item-checkbox[data-task=">"], li[data-task=">"] > input.task-list-item-checkbox, li[data-task=">"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="<"], li[data-task="<"] > input.task-list-item-checkbox, li[data-task="<"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="?"], li[data-task="?"] > input.task-list-item-checkbox, li[data-task="?"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="!"], li[data-task="!"] > input.task-list-item-checkbox, li[data-task="!"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="*"], li[data-task="*"] > input.task-list-item-checkbox, li[data-task="*"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="\""], li[data-task="\""] > input.task-list-item-checkbox, li[data-task="\""] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="l"], li[data-task="l"] > input.task-list-item-checkbox, li[data-task="l"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="b"], li[data-task="b"] > input.task-list-item-checkbox, li[data-task="b"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="i"], li[data-task="i"] > input.task-list-item-checkbox, li[data-task="i"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="S"], li[data-task="S"] > input.task-list-item-checkbox, li[data-task="S"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="I"], li[data-task="I"] > input.task-list-item-checkbox, li[data-task="I"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="p"], li[data-task="p"] > input.task-list-item-checkbox, li[data-task="p"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="c"], li[data-task="c"] > input.task-list-item-checkbox, li[data-task="c"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="f"], li[data-task="f"] > input.task-list-item-checkbox, li[data-task="f"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="k"], li[data-task="k"] > input.task-list-item-checkbox, li[data-task="k"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="w"], li[data-task="w"] > input.task-list-item-checkbox, li[data-task="w"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="u"], li[data-task="u"] > input.task-list-item-checkbox, li[data-task="u"] > p > input.task-list-item-checkbox,
+  input.task-list-item-checkbox[data-task="d"], li[data-task="d"] > input.task-list-item-checkbox, li[data-task="d"] > p > input.task-list-item-checkbox
+):checked:hover::after {
+  opacity: 0.7;
+}
+/* [>] Forwarded */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task=">"], li[data-task=">"] > input.task-list-item-checkbox, li[data-task=">"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-orange);
+}
+/* [<] Scheduled */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="<"], li[data-task="<"] > input.task-list-item-checkbox, li[data-task="<"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M16 2v4'/%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-orange);
+}
+/* [?] Question */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="?"], li[data-task="?"] > input.task-list-item-checkbox, li[data-task="?"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+  --etc-task-color: var(--etc-task-yellow);
+}
+/* [!] Important */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="!"], li[data-task="!"] > input.task-list-item-checkbox, li[data-task="!"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-red);
+}
+/* [*] Star */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="*"], li[data-task="*"] > input.task-list-item-checkbox, li[data-task="*"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z'/%3E%3C/svg%3E");
+  --etc-task-color: var(--etc-task-yellow);
+}
+/* ["] Quote */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="\""], li[data-task="\""] > input.task-list-item-checkbox, li[data-task="\""] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z'/%3E%3Cpath d='M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z'/%3E%3C/svg%3E");
+  --etc-task-color: var(--text-muted);
+}
+/* [l] Location */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="l"], li[data-task="l"] > input.task-list-item-checkbox, li[data-task="l"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-red);
+}
+/* [b] Bookmark */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="b"], li[data-task="b"] > input.task-list-item-checkbox, li[data-task="b"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-orange);
+}
+/* [i] Information */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="i"], li[data-task="i"] > input.task-list-item-checkbox, li[data-task="i"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-blue);
+}
+/* [S] Savings */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="S"], li[data-task="S"] > input.task-list-item-checkbox, li[data-task="S"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z'/%3E%3Cpath d='M16 10h.01'/%3E%3Cpath d='M2 8v1a2 2 0 0 0 2 2h1'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-green);
+}
+/* [I] Idea */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="I"], li[data-task="I"] > input.task-list-item-checkbox, li[data-task="I"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5'/%3E%3Cpath d='M9 18h6'/%3E%3Cpath d='M10 22h4'/%3E%3C/svg%3E");
+  --etc-task-color: var(--etc-task-yellow);
+}
+/* [p] Pro */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="p"], li[data-task="p"] > input.task-list-item-checkbox, li[data-task="p"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z'/%3E%3Cpath d='M7 10v12'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-green);
+}
+/* [c] Con */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="c"], li[data-task="c"] > input.task-list-item-checkbox, li[data-task="c"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z'/%3E%3Cpath d='M17 14V2'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-red);
+}
+/* [f] Fire */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="f"], li[data-task="f"] > input.task-list-item-checkbox, li[data-task="f"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-red);
+}
+/* [k] Key */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="k"], li[data-task="k"] > input.task-list-item-checkbox, li[data-task="k"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z'/%3E%3Ccircle cx='16.5' cy='7.5' r='0.5' fill='black'/%3E%3C/svg%3E");
+  --etc-task-color: var(--etc-task-yellow);
+}
+/* [w] Win */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="w"], li[data-task="w"] > input.task-list-item-checkbox, li[data-task="w"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978'/%3E%3Cpath d='M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978'/%3E%3Cpath d='M18 9h1.5a1 1 0 0 0 0-5H18'/%3E%3Cpath d='M4 22h16'/%3E%3Cpath d='M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z'/%3E%3Cpath d='M6 9H4.5a1 1 0 0 1 0-5H6'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-purple);
+}
+/* [u] Up */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="u"], li[data-task="u"] > input.task-list-item-checkbox, li[data-task="u"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 7h6v6'/%3E%3Cpath d='m22 7-8.5 8.5-5-5L2 17'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-green);
+}
+/* [d] Down */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="d"], li[data-task="d"] > input.task-list-item-checkbox, li[data-task="d"] > p > input.task-list-item-checkbox) {
+  --etc-task-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 17h6v-6'/%3E%3Cpath d='m22 17-8.5-8.5-5 5L2 7'/%3E%3C/svg%3E");
+  --etc-task-color: var(--color-red);
+}
+/* [/] In progress: the box half filled */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="/"], li[data-task="/"] > input.task-list-item-checkbox, li[data-task="/"] > p > input.task-list-item-checkbox):checked {
+  border-color: var(--checkbox-color);
+  background-color: transparent;
+  background-image: linear-gradient(90deg, var(--checkbox-color) 50%, transparent 50%);
+}
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="/"], li[data-task="/"] > input.task-list-item-checkbox, li[data-task="/"] > p > input.task-list-item-checkbox):checked::after {
+  content: none;
+}
+/* [-] Cancelled: a faint crossed-out box, and the task struck through */
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="-"], li[data-task="-"] > input.task-list-item-checkbox, li[data-task="-"] > p > input.task-list-item-checkbox):checked {
+  border-color: var(--text-faint);
+  background-color: transparent;
+  background-image: none;
+}
+body:not(.etc-alt-tasks-plain) :is(input.task-list-item-checkbox[data-task="-"], li[data-task="-"] > input.task-list-item-checkbox, li[data-task="-"] > p > input.task-list-item-checkbox):checked::after {
+  top: -1px;
+  inset-inline-start: -1px;
+  background-color: var(--text-faint);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E");
+  -webkit-mask-size: 75%;
+  -webkit-mask-position: center;
+}
+body:not(.etc-alt-tasks-plain) :is(ul > li.task-list-item[data-task="-"], .markdown-source-view.mod-cm6 .HyperMD-task-line[data-task="-"]) {
+  text-decoration: line-through;
+  color: var(--text-faint);
+}
+
+/* ---------- Tag overrides ----------
+   Resolved on body in section 3; handing them to body's children reaches
+   tags in notes, Live Preview, the tags property and popovers alike. */
+body > * {
+  --tag-color: var(--etc-tag-fg);
+  --tag-color-hover: var(--etc-tag-fg-hover);
+  --tag-background: var(--etc-tag-bg);
+  --tag-background-hover: var(--etc-tag-bg-hover);
+  --tag-border-color: var(--etc-tag-bd);
+  --tag-border-color-hover: var(--etc-tag-bd-hover);
+  --tag-border-width: var(--etc-tag-bw);
+}
+
+/* ---------- Callouts ----------
+   Obsidian fixes the fill at 10% and has no side bar, so both are drawn here.
+   The side bar widens the start border; outlined callouts keep it matching. */
+.callout {
+  background-color: color-mix(in oklch, var(--callout-color) var(--etc-callout-fill), transparent);
+  border-inline-start: max(var(--callout-border-width), var(--etc-callout-bar)) solid
+    color-mix(in oklch, var(--callout-color) calc(var(--etc-callout-bar-opacity) * 100%), transparent);
+}
+
+/* ---------- Properties ---------- */
+body:is(:is(.etc-props-card, .etc-scheme-griply:where(:not(.etc-props-plain, .etc-props-rules))), .etc-props-rules) :is(.markdown-source-view, .markdown-preview-view) .metadata-container {
+  transform: none;
+}
+body.etc-props-no-heading .metadata-container:not(.is-collapsed) .metadata-properties-heading {
+  display: none;
+}
+body.etc-props-add-hide .metadata-container .metadata-add-button {
+  display: none;
+}
+body.etc-props-add-hover .metadata-container .metadata-add-button,
+body.etc-props-icons-hover .metadata-property-icon {
+  transition: opacity var(--etc-toolbar-duration) ease-out;
+}
+body.etc-props-add-hover .metadata-container:not(:hover, :focus-within) .metadata-add-button,
+body.etc-props-icons-hover .metadata-property:not(:hover, :focus-within, .is-selected) .metadata-property-icon {
+  opacity: 0;
+}
+
+/* ---------- Tables ---------- */
+.markdown-rendered :is(th, td) {
+  border-inline-width: var(--etc-table-col-lines);
+}
+.markdown-rendered tbody td {
+  border-block-width: var(--etc-table-row-lines);
+}
+body.etc-table-tabular .markdown-rendered table {
+  font-variant-numeric: tabular-nums;
+}
+body.etc-table-full .markdown-rendered table,
+body.etc-table-full .markdown-source-view.mod-cm6 .cm-table-widget .table-wrapper {
+  width: 100%;
+}
+
+/* ---------- Status bar ---------- */
+/* !important beats the corner tuck used beside elevated cards (section 6) */
+body:is(.etc-status-floating, :is(.etc-scheme-apple-notes, .etc-scheme-griply):where(:not(.etc-status-docked))):not(.is-mobile) .status-bar {
+  right: var(--etc-status-inset) !important;
+  bottom: var(--etc-status-inset) !important;
+  padding-inline: var(--size-4-2);
+  border: var(--etc-card-outline-width) solid var(--etc-ui-border-color) !important;
+  border-radius: 8px !important;
+  background-color: var(--background-primary) !important;
+  box-shadow: var(--etc-pane-shadow) !important;
+}
+body:is(.etc-status-floating, :is(.etc-scheme-apple-notes, .etc-scheme-griply):where(:not(.etc-status-docked))).etc-status-right:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile):has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed) .status-bar {
+  right: calc(var(--etc-status-inset) + var(--etc-reveal-strip)) !important;
+}
+/* Reveal on hover: invisible in place until hovered, then fades and slides in
+   (.etc-status-fade is the older name for it) */
+body:is(.etc-reveal-status, .etc-status-fade, :not(.css-settings-manager)):not(.is-mobile) .status-bar {
+  opacity: 0;
+  translate: 0 6px;
+  transition: opacity var(--etc-toolbar-duration) ease-out var(--etc-reveal-close-delay),
+    translate var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-reveal-close-delay);
+}
+body:is(.etc-reveal-status, .etc-status-fade, :not(.css-settings-manager)):not(.is-mobile) .status-bar:is(:hover, :focus-within, :has(.has-active-menu)) {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: var(--etc-reveal-open-delay);
+}
+body.etc-status-hide .status-bar {
+  display: none;
+}
+
+/* Bottom center (the default): square bottom edge, rounded top corners when docked.
+   !important beats the right-hand placements above and in sections 6 and 12. */
+body:not(.etc-status-right) {
+  --status-bar-border-width: var(--border-width) var(--border-width) 0;
+  --status-bar-radius: var(--radius-m) var(--radius-m) 0 0;
+}
+/* :not() twice so this outweighs the floating pill rule above */
+body:not(.etc-status-right):not(.is-mobile) .status-bar {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%);
+  padding-inline: var(--size-4-2);
+}
+body:not(.etc-status-right, :is(.etc-status-floating, :is(.etc-scheme-apple-notes, .etc-scheme-griply):where(:not(.etc-status-docked))), .is-mobile) .status-bar {
+  bottom: 0 !important;
+  border-radius: var(--status-bar-radius) !important;
+}
+/* Docked inside an elevated editor card, along its bottom edge */
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))):not(.etc-status-right, :is(.etc-status-floating, :is(.etc-scheme-apple-notes, .etc-scheme-griply):where(:not(.etc-status-docked))), .is-mobile) .status-bar {
+  bottom: calc(var(--etc-pane-gap) + 1px) !important;
+  background-color: var(--background-primary) !important;
+}
+
+/* ---------- Inline HTML in notes ---------- */
+:is(.markdown-rendered, .markdown-source-view) kbd {
+  font-family: var(--font-interface);
+  font-size: 0.82em;
+  color: var(--text-normal);
+  background-color: var(--background-primary-alt);
+  border: 1px solid var(--background-modifier-border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 0.05em 0.45em;
+  white-space: nowrap;
+}
+/* <mark> matches ==highlights== instead of the browser's yellow */
+:is(.markdown-rendered, .markdown-source-view) mark {
+  background-color: var(--text-highlight-bg);
+  color: inherit;
+}
+:is(.markdown-rendered, .markdown-source-view) details {
+  margin: 1em 0;
+  padding: 0.45em 0.9em;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+}
+:is(.markdown-rendered, .markdown-source-view) details > summary {
+  cursor: var(--cursor);
+  font-weight: var(--font-semibold);
+  color: var(--text-normal);
+}
+:is(.markdown-rendered, .markdown-source-view) details > summary::marker {
+  color: var(--text-faint);
+}
+:is(.markdown-rendered, .markdown-source-view) details[open] > summary {
+  margin-bottom: 0.5em;
+}
+:is(.markdown-rendered, .markdown-source-view) iframe {
+  border-radius: 8px;
 }
 
 /* ---------- Scheme-specific touches ---------- */
@@ -2798,174 +3653,214 @@ body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hove
 
 /* ==========================================================================
    11. Vault / Help / Settings bar at the bottom of the left sidebar
-   Fade: stays in place, invisible until hovered.
-   Collapse: shrinks to a slim strip with the same glyph as the toolbars.
+   Stays in place, invisible until hovered.
    ========================================================================== */
-body.etc-vault-bar-fade:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile > * {
+body:is(.etc-vault-bar-fade, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile > * {
   opacity: 0;
   transition: opacity var(--etc-toolbar-duration) ease-out var(--etc-toolbar-close-delay);
 }
-body.etc-vault-bar-fade:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu)) > * {
+body:is(.etc-vault-bar-fade, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu)) > * {
   opacity: 1;
   transition-delay: 0s;
-}
-
-body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile {
-  position: relative;
-  overflow: hidden;
-  max-height: var(--etc-toolbar-height);
-  padding-block: 0;
-  transition-property: max-height, padding;
-  transition-duration: var(--etc-toolbar-duration);
-  transition-timing-function: var(--etc-toolbar-ease);
-  transition-delay: calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.3);
-}
-body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile > * {
-  opacity: 0;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-toolbar-close-delay);
-}
-body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile::after {
-  content: var(--etc-toolbar-glyph);
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--etc-toolbar-color);
-  font-size: var(--etc-toolbar-size);
-  line-height: 1;
-  pointer-events: none;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.6) ease-in-out
-    calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.5);
-}
-body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu)) {
-  max-height: var(--etc-vault-bar-open-height);
-  padding-block: var(--size-4-2);
-  transition-delay: 0s;
-}
-body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu)) > * {
-  opacity: 1;
-  transition: opacity var(--etc-toolbar-duration) ease-out calc(var(--etc-toolbar-duration) * 0.35);
-}
-body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu))::after {
-  opacity: 0;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.4) ease-out 0s;
-}
-@supports (interpolate-size: allow-keywords) {
-  body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile {
-    interpolate-size: allow-keywords;
-    max-height: none;
-    height: var(--etc-toolbar-height);
-    transition-property: height, padding;
-  }
-  body.etc-vault-bar-collapse:not(.is-mobile) .workspace-split.mod-left-split .workspace-sidedock-vault-profile:is(:hover, :focus-within, :has(.has-active-menu)) {
-    max-height: none;
-    height: auto;
-  }
 }
 
 /* ==========================================================================
    12. Hover to reveal: ribbon and sidebars
-   Each tucks away to a slim edge (--etc-reveal-strip) and slides out over
-   its neighbour on hover, so the editor never shifts. Keyboard focus and
-   open menus keep it out.
+   The ribbon, and a closed sidebar, tuck away to a slim edge
+   (--etc-reveal-strip) and slide out over their neighbour on hover, so the
+   editor never shifts. Keyboard focus and open menus keep them out.
    ========================================================================== */
-body:is(.etc-reveal-ribbon, .etc-reveal-left, .etc-reveal-right):not(.is-mobile) .workspace {
+body:is(:is(.etc-reveal-ribbon, :not(.css-settings-manager)), :is(.etc-reveal-left, :not(.css-settings-manager)), :is(.etc-reveal-right, :not(.css-settings-manager))):not(.is-mobile) .workspace {
   position: relative;
+}
+
+/* Tucked-away edges take the color of what sits next to them, so they can't
+   be seen: the editor's color beside a flat solid editor, otherwise nothing
+   (the window behind elevated cards, or the glass) */
+body {
+  --etc-reveal-edge-bg: transparent;
+}
+body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))) {
+  --etc-reveal-edge-bg: var(--background-primary);
+}
+body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))).is-translucent:not(.is-fullscreen) {
+  --etc-reveal-edge-bg: transparent;
+}
+body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))):is(.etc-glass, :not(.css-settings-manager)):not(.etc-glass-all).is-translucent:not(.is-fullscreen) {
+  --etc-reveal-edge-bg: var(--background-primary);
 }
 
 /* ---------- Ribbon ---------- */
 /* Takes up only the edge in the layout; the rest hangs off-screen */
-body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) {
   --etc-ribbon-footprint: var(--etc-reveal-strip);
 }
-body.mod-macos.etc-reveal-ribbon.show-ribbon:not(.is-popout-window) {
+body.mod-macos:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-popout-window) {
   --frame-left-space: calc(80px - var(--etc-reveal-strip));
 }
-body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left {
   position: relative;
   z-index: calc(var(--layer-sidedock) + 2);
+  /* Full height, so the edge has no gap above it; the corner piece moves inside */
+  margin-top: 0;
+  padding-top: calc(var(--header-height) + var(--size-4-2));
   margin-right: calc(var(--etc-reveal-strip) - var(--ribbon-width));
   transform: translateX(calc(var(--etc-reveal-strip) - var(--ribbon-width)));
-  transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-toolbar-close-delay), box-shadow var(--etc-toolbar-duration) ease var(--etc-toolbar-close-delay);
+  /* Invisible while tucked away; see --etc-reveal-edge-bg */
+  background-color: var(--etc-reveal-edge-bg) !important;
+  border-right-color: transparent;
+  transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-reveal-close-delay), box-shadow var(--etc-toolbar-duration) ease var(--etc-reveal-close-delay),
+    background-color 0s linear calc(var(--etc-reveal-close-delay) + var(--etc-toolbar-duration));
 }
-body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left > * {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left::before {
+  background-color: inherit !important;
+  border-bottom-color: transparent;
+}
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left > * {
   opacity: 0;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-toolbar-close-delay);
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-reveal-close-delay);
 }
-body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)) {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)) {
   transform: none;
   box-shadow: var(--etc-reveal-shadow);
-  transition-delay: 0s;
+  background-color: var(--ribbon-background) !important;
+  transition-delay: var(--etc-reveal-open-delay);
 }
-body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)) > * {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)) > * {
   opacity: 1;
-  transition-delay: calc(var(--etc-toolbar-duration) * 0.3);
+  transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
 }
 
-/* ---------- Sidebars ---------- */
-/* Placeholders hold the edge in the layout while the sidebars float */
-body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-ribbon.mod-left {
+/* ---------- Sidebars ----------
+   Only a closed sidebar is revealed: Obsidian hides it (display: none,
+   width: 0), so it is shown again here as an overlay at a set width with
+   just the edge peeking out. An open sidebar is left exactly as it is. */
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-ribbon.mod-left {
   order: -2;
 }
-body.etc-reveal-left:not(.is-mobile) .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed))::before,
-body.etc-reveal-right:not(.is-mobile) .workspace:has(> .workspace-split.mod-right-split:not(.is-sidedock-collapsed))::after {
+/* Placeholders hold the edge in the layout so the editor's own edges
+   (and its scrollbar) stay clear of the hover zone */
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(> .workspace-split.mod-left-split.is-sidedock-collapsed)::before,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(> .workspace-split.mod-right-split.is-sidedock-collapsed)::after {
   content: "";
   flex: 0 0 var(--etc-reveal-strip);
+  background-color: var(--etc-reveal-edge-bg);
 }
-body.etc-reveal-left:not(.is-mobile) .workspace::before {
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace::before {
   order: -1;
 }
-body.etc-reveal-right:not(.is-mobile) .workspace::after {
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace::after {
   order: 99;
 }
 
-body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed),
-body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed {
+  /* !important beats the inline display and width Obsidian sets when closing */
+  display: flex !important;
+  width: var(--etc-reveal-width) !important;
   position: absolute;
   top: 0;
   bottom: 0;
   z-index: calc(var(--layer-sidedock) + 1);
   margin-left: 0;
   margin-right: 0;
-  /* Floating over the editor, so never see-through; an elevated card keeps its own surface */
-  background-color: var(--etc-card-bg, var(--background-secondary)) !important;
-  transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-toolbar-close-delay), box-shadow var(--etc-toolbar-duration) ease var(--etc-toolbar-close-delay);
+  /* Invisible while tucked away; see --etc-reveal-edge-bg */
+  background-color: var(--etc-reveal-edge-bg) !important;
+  transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-reveal-close-delay), box-shadow var(--etc-toolbar-duration) ease var(--etc-reveal-close-delay),
+    background-color 0s linear calc(var(--etc-reveal-close-delay) + var(--etc-toolbar-duration));
 }
-body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed) {
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed {
   left: var(--etc-ribbon-footprint);
   transform: translateX(calc(var(--etc-reveal-strip) - 100%));
 }
-body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed {
   right: 0;
   transform: translateX(calc(100% - var(--etc-reveal-strip)));
 }
-body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed) > *,
-body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) > * {
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed > *,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed > * {
   opacity: 0;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-toolbar-close-delay);
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-reveal-close-delay);
 }
-body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed):is(:hover, :focus-within, :has(.has-active-menu)),
-body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed):is(:hover, :focus-within, :has(.has-active-menu)) {
+/* Obsidian hides a closed sidebar's tabs in translucent mode */
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tabs,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tabs {
+  visibility: visible;
+}
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)) {
   transform: none;
   box-shadow: var(--etc-reveal-shadow) !important;
-  transition-delay: 0s;
+  /* Floating over the editor, so never see-through */
+  background-color: var(--background-secondary) !important;
+  transition-delay: var(--etc-reveal-open-delay);
 }
-body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed):is(:hover, :focus-within, :has(.has-active-menu)) > *,
-body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed):is(:hover, :focus-within, :has(.has-active-menu)) > * {
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)) > *,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)) > * {
   opacity: 1;
-  transition-delay: calc(var(--etc-toolbar-duration) * 0.3);
+  transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
 }
 
-/* The left sidebar normally holds the macOS window-button space; while it is
-   tucked away the editor's top-left tab bar takes it over */
-body.etc-reveal-left.mod-macos.is-hidden-frameless:not(.is-fullscreen) .workspace-split.mod-root > .workspace-tabs.mod-top:first-child .workspace-tab-header-container,
-body.etc-reveal-left.mod-macos.is-hidden-frameless:not(.is-fullscreen) .workspace-split.mod-root > .workspace-split:first-child > .workspace-tabs.mod-top:first-child .workspace-tab-header-container {
+/* ---------- Ribbon and closed left sidebar together ----------
+   They share the ribbon's edge: the sidebar keeps no edge of its own and
+   hides fully, then slides out beside the ribbon whenever either is hovered,
+   focused or has a menu open. */
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(> .workspace-split.mod-left-split.is-sidedock-collapsed)::before {
+  content: none;
+}
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed {
+  transform: translateX(calc(-100% - var(--etc-reveal-strip)));
+}
+body.mod-macos:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-popout-window) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed {
+  /* Out beside the ribbon, which covers part of the window-button space */
+  --frame-left-space: calc(80px - var(--ribbon-width));
+}
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
+  > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
+) > :is(.workspace-ribbon.mod-left, .workspace-split.mod-left-split.is-sidedock-collapsed) {
+  transition-delay: var(--etc-reveal-open-delay);
+}
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
+  > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
+) > .workspace-ribbon.mod-left {
+  transform: none;
+  /* The sidebar's shadow covers both */
+  box-shadow: none;
+  background-color: var(--ribbon-background) !important;
+}
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
+  > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
+) > .workspace-split.mod-left-split.is-sidedock-collapsed {
+  transform: translateX(calc(var(--ribbon-width) - var(--etc-reveal-strip)));
+  box-shadow: var(--etc-reveal-shadow) !important;
+  background-color: var(--background-secondary) !important;
+}
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
+  > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
+) > :is(.workspace-ribbon.mod-left, .workspace-split.mod-left-split.is-sidedock-collapsed) > * {
+  opacity: 1;
+  transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
+}
+
+/* While the left sidebar is closed the editor's top-left tab bar holds the
+   macOS window-button space; the edge placeholder already covers part of it */
+body:is(.etc-reveal-left, :not(.css-settings-manager)).mod-macos.is-hidden-frameless:not(.is-fullscreen) .workspace-split.mod-root .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
   padding-left: calc(var(--size-4-2) + var(--frame-left-space) - var(--etc-reveal-strip));
 }
+/* ...unless it shares the ribbon's edge, which --frame-left-space already counts */
+body:is(.etc-reveal-left, :not(.css-settings-manager)):is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon.mod-macos.is-hidden-frameless:not(.is-fullscreen) .workspace-split.mod-root .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
+  padding-left: calc(var(--size-4-2) + var(--frame-left-space));
+}
 
-/* Status bar tucks into the editor card's corner, clear of the right edge */
-body.etc-main-elevated.etc-reveal-right:has(.workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed)) .status-bar {
+/* Right sidebar toggle (macOS) and status bar stay clear of the right edge */
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))):is(.etc-reveal-right, :not(.css-settings-manager)).mod-macos.is-hidden-frameless:not(.is-popout-window):has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed) .sidebar-toggle-button.mod-right {
+  right: calc(var(--etc-reveal-strip) + var(--etc-pane-gap) + 1px);
+}
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))):is(.etc-reveal-right, :not(.css-settings-manager)):has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed) .status-bar {
   right: calc(var(--etc-reveal-strip) + var(--etc-pane-gap) + 1px);
   bottom: calc(var(--etc-pane-gap) + 1px);
   border: none;
@@ -2973,8 +3868,302 @@ body.etc-main-elevated.etc-reveal-right:has(.workspace > .workspace-split.mod-ri
   background-color: var(--background-primary);
 }
 
+/* ---------- Note header and tabs ----------
+   The tab bar and each note's header float over the top of the note, tucked
+   up out of sight but for an invisible hover zone (--etc-reveal-hit). Hovering
+   either brings both down: the tab bar on top, the header under it. */
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs {
+  position: relative;
+  --etc-tabbar-h: var(--header-height);
+}
+/* With the Remove Tabs plugin the tab bar has no box, so the header goes to the top */
+@container style(--rt-toggle-width: 36px) {
+  body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf {
+    --etc-tabbar-h: 0px;
+  }
+}
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content {
+  position: relative;
+}
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container,
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header {
+  position: absolute;
+  inset: 0 0 auto 0;
+  background-color: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none;
+  transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-reveal-close-delay),
+    box-shadow var(--etc-toolbar-duration) ease var(--etc-reveal-close-delay),
+    background-color 0s linear calc(var(--etc-reveal-close-delay) + var(--etc-toolbar-duration));
+}
+/* Window drag regions (macOS) get no hover events, so these can't be dragged by */
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container,
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container *,
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header,
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header * {
+  -webkit-app-region: no-drag !important;
+}
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container {
+  z-index: 4;
+  transform: translateY(calc(var(--etc-reveal-hit) - 100%));
+}
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header {
+  z-index: 3;
+  transform: translateY(calc(var(--etc-reveal-hit) - 100%));
+}
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container > *,
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header > * {
+  opacity: 0;
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-reveal-close-delay);
+}
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) > .workspace-tab-header-container {
+  transform: none;
+  background-color: var(--tab-container-background) !important;
+  transition-delay: var(--etc-reveal-open-delay);
+}
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) .workspace-leaf-content > .view-header {
+  transform: translateY(var(--etc-tabbar-h));
+  background-color: var(--background-primary) !important;
+  box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.3);
+  transition-delay: var(--etc-reveal-open-delay);
+}
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) > .workspace-tab-header-container > *,
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) .workspace-leaf-content > .view-header > * {
+  opacity: 1;
+  transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  body.etc-reveal-ribbon.show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left, body.etc-reveal-left:not(.is-mobile) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed), body.etc-reveal-right:not(.is-mobile) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed) {
+  body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left,
+  body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed,
+  body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed {
     transition: none;
   }
+  body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container,
+  body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header,
+  body:is(.etc-reveal-status, .etc-status-fade, :not(.css-settings-manager)):not(.is-mobile) .status-bar {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   13. Mermaid diagrams
+   Mermaid writes its colors into the diagram under an id selector, some of
+   them !important, so these use !important and :not(#etc-mermaid) for the
+   weight of an id. Dark mode normally inverts the light diagram with a
+   filter; the scheme's own colors replace that.
+   ========================================================================== */
+body:not(.etc-mermaid-plain) .mermaid {
+  --etc-dia-text: var(--text-normal);
+  --etc-dia-muted: var(--text-muted);
+  --etc-dia-line: var(--text-muted);
+  --etc-dia-border: var(--background-modifier-border);
+  --etc-dia-surface: var(--background-primary-alt);
+  --etc-dia-fill: color-mix(in oklch, var(--color-accent) 14%, var(--background-primary));
+  --etc-dia-stroke: color-mix(in oklch, var(--color-accent) 60%, var(--background-primary));
+  --etc-dia-1: var(--color-blue);
+  --etc-dia-2: var(--color-green);
+  --etc-dia-3: var(--color-orange);
+  --etc-dia-4: var(--color-purple);
+  --etc-dia-5: var(--color-red);
+  --etc-dia-6: var(--color-cyan);
+  --etc-dia-7: var(--color-yellow);
+  --etc-dia-8: var(--color-pink);
+}
+body.theme-dark:not(.etc-mermaid-plain) .mermaid > svg {
+  filter: none;
+}
+
+/* ---------- Shared: text, lines and arrowheads ---------- */
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.nodeLabel, .nodeLabel p, .label, .label text, .edgeLabel, .edgeLabel p) {
+  color: var(--etc-dia-text) !important;
+  fill: var(--etc-dia-text) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.edgeLabel, .edgeLabel p, .labelBkg) {
+  background-color: var(--background-primary) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .edgeLabel rect {
+  fill: var(--background-primary) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(marker path, .arrowheadPath, .arrowMarkerPath) {
+  fill: var(--etc-dia-line) !important;
+  stroke: var(--etc-dia-line) !important;
+}
+
+/* ---------- Flowcharts ---------- */
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .node :is(rect, circle, ellipse, polygon, path) {
+  fill: var(--etc-dia-fill) !important;
+  stroke: var(--etc-dia-stroke) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.flowchart-link, .edgePath .path) {
+  stroke: var(--etc-dia-line) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .cluster rect {
+  fill: var(--etc-dia-surface) !important;
+  stroke: var(--etc-dia-border) !important;
+}
+
+/* ---------- Sequence diagrams ---------- */
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) rect.actor {
+  fill: var(--etc-dia-fill) !important;
+  stroke: var(--etc-dia-stroke) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(text.actor, text.actor tspan, .messageText, .noteText, .noteText tspan, .labelText, .labelText tspan, .loopText, .loopText tspan) {
+  fill: var(--etc-dia-text) !important;
+  stroke: none !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.messageLine0, .messageLine1) {
+  stroke: var(--etc-dia-line) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.actor-line, .loopLine) {
+  stroke: var(--etc-dia-border) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.note, .labelBox, .activation0, .activation1, .activation2) {
+  fill: var(--etc-dia-surface) !important;
+  stroke: var(--etc-dia-border) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .sequenceNumber {
+  fill: var(--background-primary) !important;
+}
+
+/* ---------- Gantt charts ---------- */
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.titleText, .taskText, .taskText0, .taskText1, .taskText2, .taskText3, .taskTextOutsideRight, .taskTextOutsideLeft, .taskTextOutside0, .taskTextOutside1, .taskTextOutside2, .taskTextOutside3,
+  .activeText0, .activeText1, .activeText2, .activeText3, .doneText0, .doneText1, .doneText2, .doneText3, .activeCritText0, .activeCritText1, .activeCritText2, .activeCritText3, .doneCritText0, .doneCritText1, .doneCritText2, .doneCritText3, .milestoneText) {
+  fill: var(--etc-dia-text) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.sectionTitle, .sectionTitle0, .sectionTitle1, .sectionTitle2, .sectionTitle3, .grid .tick text) {
+  fill: var(--etc-dia-muted) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .grid .tick line {
+  stroke: var(--etc-dia-border) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .grid path {
+  stroke-width: 0 !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.section0, .section2) {
+  fill: color-mix(in oklch, var(--text-normal) 4%, transparent) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.section1, .section3) {
+  fill: transparent !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.task0, .task1, .task2, .task3) {
+  fill: color-mix(in oklch, var(--color-accent) 22%, var(--background-primary)) !important;
+  stroke: color-mix(in oklch, var(--color-accent) 60%, var(--background-primary)) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.active0, .active1, .active2, .active3) {
+  fill: color-mix(in oklch, var(--color-accent) 45%, var(--background-primary)) !important;
+  stroke: var(--color-accent) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.done0, .done1, .done2, .done3) {
+  fill: color-mix(in oklch, var(--text-muted) 22%, var(--background-primary)) !important;
+  stroke: color-mix(in oklch, var(--text-muted) 50%, var(--background-primary)) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.crit0, .crit1, .crit2, .crit3, .activeCrit0, .activeCrit1, .activeCrit2, .activeCrit3, .doneCrit0, .doneCrit1, .doneCrit2, .doneCrit3) {
+  fill: color-mix(in oklch, var(--color-red) 30%, var(--background-primary)) !important;
+  stroke: var(--color-red) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .today {
+  stroke: var(--color-red) !important;
+}
+
+/* ---------- Pie charts ----------
+   Slices and legend entries are both in data order, so the nth of each match. */
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .pieCircle {
+  stroke: var(--background-primary) !important;
+  stroke-width: 2px !important;
+  opacity: 1 !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .pieOuterCircle {
+  stroke: var(--etc-dia-border) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieTitleText, .slice, .legend text) {
+  fill: var(--etc-dia-text) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieCircle:nth-of-type(8n+1), g.legend:nth-of-type(8n+1) rect) {
+  fill: color-mix(in oklch, var(--etc-dia-1) 60%, var(--background-primary)) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieCircle:nth-of-type(8n+2), g.legend:nth-of-type(8n+2) rect) {
+  fill: color-mix(in oklch, var(--etc-dia-2) 60%, var(--background-primary)) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieCircle:nth-of-type(8n+3), g.legend:nth-of-type(8n+3) rect) {
+  fill: color-mix(in oklch, var(--etc-dia-3) 60%, var(--background-primary)) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieCircle:nth-of-type(8n+4), g.legend:nth-of-type(8n+4) rect) {
+  fill: color-mix(in oklch, var(--etc-dia-4) 60%, var(--background-primary)) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieCircle:nth-of-type(8n+5), g.legend:nth-of-type(8n+5) rect) {
+  fill: color-mix(in oklch, var(--etc-dia-5) 60%, var(--background-primary)) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieCircle:nth-of-type(8n+6), g.legend:nth-of-type(8n+6) rect) {
+  fill: color-mix(in oklch, var(--etc-dia-6) 60%, var(--background-primary)) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieCircle:nth-of-type(8n+7), g.legend:nth-of-type(8n+7) rect) {
+  fill: color-mix(in oklch, var(--etc-dia-7) 60%, var(--background-primary)) !important;
+}
+body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieCircle:nth-of-type(8n), g.legend:nth-of-type(8n) rect) {
+  fill: color-mix(in oklch, var(--etc-dia-8) 60%, var(--background-primary)) !important;
+}
+
+/* ==========================================================================
+   14. Settings window
+   Follows the main window: the tab list matches the left sidebar and the
+   page matches the editor, in color, borders and elevated cards. It stays
+   opaque even with the translucent window.
+   ========================================================================== */
+body:not(.etc-settings-plain, .is-mobile) .modal.mod-settings .vertical-tab-header {
+  background-color: var(--background-secondary);
+  border-inline-end-color: var(--etc-divider);
+}
+body:not(.etc-settings-plain, .is-mobile) .modal.mod-settings .vertical-tab-content-container {
+  background-color: var(--background-primary);
+}
+body:not(.etc-settings-plain, .is-mobile) .modal.mod-settings .vertical-tab-content {
+  background-color: transparent;
+}
+
+/* ---------- Elevated cards ---------- */
+body:not(.etc-settings-plain, .is-mobile):is(.etc-left-elevated, :is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))) .modal.mod-settings {
+  background-color: var(--etc-window-bg);
+}
+body:not(.etc-settings-plain, .is-mobile).etc-left-elevated .modal.mod-settings .vertical-tab-header {
+  margin: var(--etc-pane-gap) 0 var(--etc-pane-gap) var(--etc-pane-gap);
+  border: var(--etc-card-outline-width) solid var(--etc-ui-border-color);
+  border-radius: var(--etc-pane-radius);
+  box-shadow: var(--etc-pane-shadow);
+}
+body:not(.etc-settings-plain, .is-mobile).etc-left-elevated:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))) .modal.mod-settings .vertical-tab-header {
+  margin-inline-end: var(--etc-pane-gap);
+}
+body:not(.etc-settings-plain, .is-mobile):is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))) .modal.mod-settings .vertical-tab-content-container {
+  margin: var(--etc-pane-gap) var(--etc-pane-gap) var(--etc-pane-gap) 0;
+  border: var(--etc-card-outline-width) solid var(--etc-ui-border-color);
+  border-radius: var(--etc-pane-radius);
+  box-shadow: var(--etc-pane-shadow);
+}
+body:not(.etc-settings-plain, .is-mobile).etc-left-elevated:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))) .modal.mod-settings .vertical-tab-content-container {
+  margin-inline-start: var(--etc-pane-gap);
+}
+
+/* ==========================================================================
+   15. Style Settings
+   No rule under each heading, and every level indented under its parent.
+   ========================================================================== */
+.style-settings-heading {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: var(--size-4-2);
+}
+.style-settings-heading[data-level="0"] {
+  margin-bottom: var(--size-4-3);
+}
+.style-settings-heading.is-collapsed {
+  margin-bottom: var(--size-4-1);
+}
+.style-settings-heading:not([data-level="0"]) + .style-settings-container {
+  padding-inline-start: var(--size-4-6);
+  padding-bottom: var(--size-4-2);
+}
+/* Style Settings pulls nested arrows into the margin, where Obsidian clips them */
+.style-settings-heading[data-level="0"] + .style-settings-container .style-settings-heading .style-settings-collapse-indicator {
+  margin-left: 0;
 }
