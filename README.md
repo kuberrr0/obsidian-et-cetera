@@ -12,6 +12,7 @@ A calm, configurable theme for [Obsidian](https://obsidian.md). Pick a color sch
 - **Enhanced transparency:** on by default. It replaces Obsidian's heavy grey overlay with a light tint so the desktop shows through. You can make just the sidebars see-through, or the whole window, and set separate tint strengths for light and dark mode.
 - **UI borders:** borderless or hairline window edges, a custom UI border color, and optional rules under pane headers.
 - **Headings:** color, size, weight, alignment, font, letter case, letter spacing, line height and spacing for all headings. Dividers under any heading levels, with their own color, thickness, style and gap. Every setting can be overridden per level, H1 to H6, and the note title has its own settings.
+- **Markdown syntax:** optionally hide Markdown syntax (`#`, `**`, `==`, backticks, link brackets, `>`) on the line you're editing in Live Preview, or just the `#` before headings.
 - **Lists & tasks:** checkbox shape and color, how completed tasks look, bullet color, list spacing, numbered-list style, indentation guides and hollow nested bullets. Alternate checkboxes get their own icons: `[/]` in progress, `[-]` cancelled, `[>]` forwarded, `[<]` scheduled, `[?]` question, `[!]` important, `[*]` star, `["]` quote, `[l]` location, `[b]` bookmark, `[i]` information, `[S]` savings, `[I]` idea, `[p]` pro, `[c]` con, `[f]` fire, `[k]` key, `[w]` win, `[u]` up and `[d]` down.
 - **Tags & links:** tag style, shape, text, background and border colors and border thickness; link underlines.
 - **Callouts:** tinted, outlined, side bar or minimal, with adjustable corner radius. Each color scheme picks its own default.
@@ -37,7 +38,7 @@ Open **Settings → Style Settings → Et Cetera**. Settings are grouped into:
 | --- | --- |
 | Colors | Color scheme, color overrides |
 | Interface | Panes (with elevated cards), sidebars & menus, hover to reveal (with sidebar toolbars), transparency, borders, status bar, settings window |
-| Editor | Typography & layout, headings (dividers, note title, H1–H6), lists & tasks, tags & links, callouts, properties, tables, diagrams |
+| Editor | Typography & layout, Markdown syntax, headings (dividers, note title, H1–H6), lists & tasks, tags & links, callouts, properties, tables, diagrams |
 
 Options marked *Scheme default* follow the active color scheme. Use the reset arrow next to any setting to return it to the scheme's value.
 

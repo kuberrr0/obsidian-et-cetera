@@ -611,6 +611,24 @@ settings:
     step: 0.125
     format: "rem"
   -
+    id: "etc-h-syntax"
+    title: "Markdown syntax"
+    type: "heading"
+    level: 2
+    collapsed: true
+  -
+    id: "etc-hide-syntax"
+    title: "Hide Markdown syntax while editing"
+    description: "Live Preview normally shows #, **, ==, `, [[ ]], links and > on the line you're editing. This hides them there too, so notes always look rendered. The text still edits as usual. Source mode is unaffected."
+    type: "class-toggle"
+    default: false
+  -
+    id: "etc-hide-heading-marks"
+    title: "Hide heading marks while editing"
+    description: "Hides only the # before headings on the line you're editing in Live Preview."
+    type: "class-toggle"
+    default: false
+  -
     id: "etc-h-headings"
     title: "Headings"
     type: "heading"
@@ -4166,4 +4184,29 @@ body:not(.etc-settings-plain, .is-mobile).etc-left-elevated:is(.etc-main-elevate
 /* Style Settings pulls nested arrows into the margin, where Obsidian clips them */
 .style-settings-heading[data-level="0"] + .style-settings-container .style-settings-heading .style-settings-collapse-indicator {
   margin-left: 0;
+}
+
+/* ==========================================================================
+   16. Markdown syntax while editing (Live Preview)
+   Live Preview hides syntax everywhere but the line being edited; these hide
+   it there too. List markers, checkboxes, tags, math and code fences stay.
+   ========================================================================== */
+body.etc-hide-syntax .markdown-source-view.mod-cm6.is-live-preview .cm-line :is(
+  .cm-formatting-header,
+  .cm-formatting-strong,
+  .cm-formatting-em,
+  .cm-formatting-strikethrough,
+  .cm-formatting-highlight,
+  .cm-formatting-code.cm-inline-code,
+  .cm-formatting-escape,
+  .cm-formatting-quote,
+  .cm-formatting-link,
+  .cm-formatting-link-string,
+  .cm-formatting-image,
+  .cm-string.cm-url,
+  .cm-link-has-alias,
+  .cm-link-alias-pipe
+),
+body.etc-hide-heading-marks .markdown-source-view.mod-cm6.is-live-preview .cm-line .cm-formatting-header {
+  display: none;
 }
