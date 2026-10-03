@@ -2409,7 +2409,7 @@ body {
   --etc-p-menu-selection: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.16);
   --etc-p-h1-weight: 700;
   --etc-p-h2-weight: 600;
-  --etc-p-h2-divider: 1;
+  --etc-p-h1-divider: 1;
   --etc-p-h1-color: var(--text-normal);
   --etc-p-h2-color: var(--text-normal);
   --etc-p-h3-color: var(--text-normal);
