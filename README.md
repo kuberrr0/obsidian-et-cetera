@@ -20,7 +20,7 @@ A calm, configurable theme for [Obsidian](https://obsidian.md). Pick a color sch
 - **Tables:** grid, rows only, a rule under the header or no lines; shaded header, alternating rows, row hover highlight, tabular figures and full-width tables.
 - **Diagrams & HTML:** Mermaid flowcharts, sequence diagrams, Gantt and pie charts take the scheme's colors in light and dark mode. `<kbd>` keys look like keycaps, `<details>` gets a frame, and `<mark>` matches `==highlights==`.
 - **Status bar:** docked or a floating pill (the default in Apple Notes and Griply), at the bottom center (default) or bottom right, or hidden.
-- **Hover to reveal (on by default):** the ribbon tucks away to a slim edge, a closed sidebar slides out over the editor from the window edge, the note header and tab bar slide down from the top of the note, and the status bar and the vault / help / settings bar appear when hovered, all without shifting the editor. Set the edge width, open and close delays and the revealed sidebar width. The sidebar toolbars shrink to an ellipsis until hovered.
+- **Hover to reveal (on by default):** the ribbon tucks away to a slim edge, a closed sidebar slides out over the editor from the window edge (or its toggle button) with the toggle button to keep it open, the note header and tab bar slide down from the top of the note, and the status bar and the vault / help / settings bar appear when hovered, all without shifting the editor. Set the edge width, open and close delays and the revealed sidebar width. The sidebar toolbars shrink to an ellipsis until hovered.
 
 ## Installation
 

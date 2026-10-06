@@ -298,13 +298,13 @@ settings:
   -
     id: "etc-reveal-left"
     title: "Left sidebar: reveal on hover"
-    description: "While the left sidebar is closed, hovering the window's left edge slides it out over the editor. An open sidebar stays as it is. With the ribbon also set to reveal, both share one edge and slide out together."
+    description: "While the left sidebar is closed, hovering the window's left edge slides it out over the editor, with its toggle button to keep it open; hovering the toggle button does the same. An open sidebar stays as it is. With the ribbon also set to reveal, both share one edge and slide out together."
     type: "class-toggle"
     default: true
   -
     id: "etc-reveal-right"
     title: "Right sidebar: reveal on hover"
-    description: "While the right sidebar is closed, hovering the window's right edge slides it out over the editor. An open sidebar stays as it is."
+    description: "While the right sidebar is closed, hovering the window's right edge slides it out over the editor, with its toggle button to keep it open; hovering the toggle button does the same. An open sidebar stays as it is."
     type: "class-toggle"
     default: true
   -
@@ -3785,7 +3785,7 @@ body.etc-left-elevated .workspace:has(> .workspace-split.mod-left-split:not(.is-
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) {
   --etc-ribbon-footprint: var(--etc-reveal-strip);
 }
-body.mod-macos:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-popout-window) {
+body.mod-macos:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-popout-window, .is-fullscreen) {
   --frame-left-space: calc(80px - var(--etc-reveal-strip));
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary) {
@@ -3877,8 +3877,12 @@ body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspac
 body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tabs {
   visibility: visible;
 }
+/* Out while hovered, focused or showing a menu, or while its toggle button,
+   which Obsidian parks in the editor's tab bar, is hovered (see below) */
 body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
-body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)) {
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-left:hover) > .workspace-split.mod-left-split.is-sidedock-collapsed,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-right:hover) > .workspace-split.mod-right-split.is-sidedock-collapsed {
   transform: none;
   box-shadow: var(--etc-reveal-shadow) !important;
   /* Floating over the editor, so never see-through */
@@ -3886,15 +3890,25 @@ body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspa
   transition-delay: var(--etc-reveal-open-delay);
 }
 body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)) > *,
-body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)) > * {
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-left:hover) > .workspace-split.mod-left-split.is-sidedock-collapsed > *,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)) > *,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-right:hover) > .workspace-split.mod-right-split.is-sidedock-collapsed > * {
   opacity: 1;
   transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
+}
+/* An overlay, not a title bar: a drag region would also swallow the clicks
+   and hover of the toggle button floating over it */
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tab-header-container,
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tab-header-container *,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tab-header-container,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tab-header-container * {
+  -webkit-app-region: no-drag !important;
 }
 
 /* ---------- Ribbon and closed left sidebar together ----------
    They share the ribbon's edge: the sidebar keeps no edge of its own and
    hides fully, then slides out beside the ribbon whenever either is hovered,
-   focused or has a menu open. */
+   focused or has a menu open, or the sidebar's toggle button is hovered. */
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(> .workspace-split.mod-left-split.is-sidedock-collapsed)::before {
   content: none;
 }
@@ -3907,13 +3921,15 @@ body.mod-macos:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-revea
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
   > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
-  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
+  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-split.mod-root .sidebar-toggle-button.mod-left:hover
 ) > :is(.workspace-ribbon:is(.mod-left, .mod-primary), .workspace-split.mod-left-split.is-sidedock-collapsed) {
   transition-delay: var(--etc-reveal-open-delay);
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
   > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
-  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
+  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-split.mod-root .sidebar-toggle-button.mod-left:hover
 ) > .workspace-ribbon:is(.mod-left, .mod-primary) {
   transform: none;
   /* The sidebar's shadow covers both */
@@ -3922,7 +3938,8 @@ body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :n
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
   > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
-  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
+  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-split.mod-root .sidebar-toggle-button.mod-left:hover
 ) > .workspace-split.mod-left-split.is-sidedock-collapsed {
   transform: translateX(calc(var(--ribbon-width) - var(--etc-reveal-strip)));
   box-shadow: var(--etc-reveal-shadow) !important;
@@ -3930,10 +3947,63 @@ body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :n
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
   > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
-  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
+  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-split.mod-root .sidebar-toggle-button.mod-left:hover
 ) > :is(.workspace-ribbon:is(.mod-left, .mod-primary), .workspace-split.mod-left-split.is-sidedock-collapsed) > * {
   opacity: 1;
   transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
+}
+
+/* ---------- Toggle buttons of closed sidebars ----------
+   Obsidian parks a closed sidebar's toggle button in the editor's tab bar.
+   While the sidebar is out, the button floats over the sidebar's top corner
+   and the sidebar's tab bar keeps room for it: the right one in Obsidian's
+   own spot, the left one mirrored just past the window buttons. Hovering it
+   keeps the sidebar out, so it can be clicked to keep the sidebar open. */
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(> .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-split.mod-root .sidebar-toggle-button.mod-left:hover) .workspace-split.mod-root .sidebar-toggle-button.mod-left,
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(> .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu))) .workspace-split.mod-root .sidebar-toggle-button.mod-left,
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(> .workspace-split.mod-right-split.is-sidedock-collapsed):has(> .workspace-split.mod-right-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-split.mod-root .sidebar-toggle-button.mod-right:hover) .workspace-split.mod-root .sidebar-toggle-button.mod-right {
+  position: fixed;
+  top: 0;
+  left: var(--etc-toggle-left, auto);
+  right: var(--etc-toggle-right, auto);
+  z-index: calc(var(--layer-sidedock) + 2);
+  width: auto;
+  padding-inline: var(--etc-toggle-pad-start, 0) var(--etc-toggle-pad-end, 0);
+  opacity: 1;
+  border-radius: 0;
+  background-color: transparent;
+}
+/* Where they float: the left one at the sidebar's left edge (beside a
+   revealed ribbon, else past the ribbon's footprint) plus the window-button
+   space; the right one at the window's right edge less that space */
+.workspace-split.mod-root .sidebar-toggle-button.mod-left {
+  --etc-toggle-left: max(var(--ribbon-width), var(--etc-ribbon-footprint));
+  --etc-toggle-pad-start: var(--size-4-2);
+}
+.is-hidden-frameless:not(.is-fullscreen) .workspace-split.mod-root .sidebar-toggle-button.mod-left {
+  --etc-toggle-left: max(var(--ribbon-width), calc(var(--etc-ribbon-footprint) + var(--frame-left-space)));
+}
+.workspace-split.mod-root .sidebar-toggle-button.mod-right {
+  --etc-toggle-right: 0px;
+  --etc-toggle-pad-end: var(--size-4-2);
+}
+.is-hidden-frameless:not(.is-fullscreen) .workspace-split.mod-root .sidebar-toggle-button.mod-right {
+  --etc-toggle-right: var(--frame-right-space);
+}
+/* Room for them in the sidebars' tab bars (Obsidian keeps the same room for
+   its right button on macOS) */
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-left) > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
+  padding-left: 38px;
+}
+body:is(.etc-reveal-left, :not(.css-settings-manager)).is-hidden-frameless:not(.is-mobile, .is-fullscreen) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-left) > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
+  padding-left: calc(38px + var(--frame-left-space));
+}
+body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-right) > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tabs.mod-top-right-space .workspace-tab-header-container {
+  padding-right: 38px;
+}
+body:is(.etc-reveal-right, :not(.css-settings-manager)).is-hidden-frameless:not(.is-mobile, .is-fullscreen) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-right) > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tabs.mod-top-right-space .workspace-tab-header-container {
+  padding-right: calc(38px + var(--frame-right-space));
 }
 
 /* While the left sidebar is closed the editor's top-left tab bar holds the
@@ -3961,7 +4031,8 @@ body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))):is(.
 /* ---------- Note header and tabs ----------
    The tab bar and each note's header float over the top of the note, tucked
    up out of sight but for an invisible hover zone (--etc-reveal-hit). Hovering
-   either brings both down: the tab bar on top, the header under it. */
+   either brings both down: the tab bar on top, the header under it. A closed
+   sidebar's toggle button parked in the tab bar brings out its sidebar instead. */
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs {
   position: relative;
   --etc-tabbar-h: var(--header-height);
@@ -3995,7 +4066,14 @@ body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .worksp
 }
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container {
   z-index: 4;
-  transform: translateY(calc(var(--etc-reveal-hit) - 100%));
+  /* Moved by its offset rather than a transform, which would trap the toggle
+     buttons floating out of it (see Toggle buttons of closed sidebars) */
+  top: calc(var(--etc-reveal-hit) - var(--header-height));
+  transition-property: top, box-shadow, background-color;
+}
+/* ...and while a sidebar is out it drops its layer, so they can rise above it */
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(> .workspace-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)), > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-split.mod-root .sidebar-toggle-button:hover) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container {
+  z-index: auto;
 }
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header {
   z-index: 3;
@@ -4006,19 +4084,19 @@ body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .worksp
   opacity: 0;
   transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-reveal-close-delay);
 }
-body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) > .workspace-tab-header-container {
-  transform: none;
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container > :not(.sidebar-toggle-button):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) > .workspace-tab-header-container {
+  top: 0;
   background-color: var(--tab-container-background) !important;
   transition-delay: var(--etc-reveal-open-delay);
 }
-body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) .workspace-leaf-content > .view-header {
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container > :not(.sidebar-toggle-button):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) .workspace-leaf-content > .view-header {
   transform: translateY(var(--etc-tabbar-h));
   background-color: var(--background-primary) !important;
   box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.3);
   transition-delay: var(--etc-reveal-open-delay);
 }
-body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) > .workspace-tab-header-container > *,
-body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container:is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) .workspace-leaf-content > .view-header > * {
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container > :not(.sidebar-toggle-button):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) > .workspace-tab-header-container > *,
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container > :not(.sidebar-toggle-button):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) .workspace-leaf-content > .view-header > * {
   opacity: 1;
   transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
 }
