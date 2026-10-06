@@ -74,7 +74,7 @@ settings:
   -
     id: "background-secondary"
     title: "Sidebar background"
-    description: "Also the window behind elevated panes."
+    description: "Also the window behind elevated cards, unless the left sidebar has a color of its own."
     type: "variable-themed-color"
     format: "hex"
     opacity: false
@@ -207,12 +207,12 @@ settings:
   -
     id: "etc-window-bg"
     title: "Window background"
-    description: "Shows in the gaps between cards. Defaults to the sidebar color (a shade darker when the left sidebar is a card)."
+    description: "Shows in the gaps between cards. Defaults to the left sidebar's color, a shade darker when the left sidebar is a card. A translucent window shows its glass there instead, unless the tint strength is 100."
     type: "variable-themed-color"
     format: "hex"
     opacity: false
-    default-light: "#f3f5f7"
-    default-dark: "#1f1f21"
+    default-light: "#f9fbfc"
+    default-dark: "#232325"
   -
     id: "etc-h-sidebar"
     title: "Sidebars & menus"
@@ -222,7 +222,7 @@ settings:
   -
     id: "etc-left-sidebar-color"
     title: "Left sidebar color"
-    description: "Leave untouched to use the scheme's sidebar color. Text and icons switch between light and dark to stay readable."
+    description: "Leave untouched to use the scheme's sidebar color. Text and icons switch between light and dark to stay readable, and the window behind elevated cards follows it."
     type: "variable-themed-color"
     format: "hex"
     opacity: false
@@ -457,7 +457,7 @@ settings:
   -
     id: "etc-glass-tint"
     title: "Tint color"
-    description: "Defaults to the scheme's sidebar color."
+    description: "Defaults to the scheme's sidebar color. When the right sidebar is a card and the editor isn't see-through, it follows the left sidebar's color instead, as the window background does."
     type: "variable-themed-color"
     format: "hex"
     opacity: false
@@ -1873,7 +1873,13 @@ body {
   --etc-p-menu-selection: var(--background-modifier-hover);
   --etc-heading-divider-color: var(--background-modifier-border);
   --etc-glass-tint: var(--background-secondary);
-  --etc-window-bg: var(--background-secondary);
+  /* The left sidebar's own color, custom or the scheme's. Unset when it has none,
+     so var(--etc-left-sidebar, x) falls back to x */
+  --etc-left-sidebar: var(--etc-left-sidebar-color, var(--etc-p-left-sidebar));
+  --etc-left-sidebar-shade: oklch(from var(--etc-left-sidebar) calc(l - 0.03) c h);
+  /* The window behind the cards carries on from a flat left sidebar */
+  --etc-window-auto: var(--etc-left-sidebar, var(--background-secondary));
+  --etc-window-bg: var(--etc-window-auto);
   --nav-item-radius: 6px;
 
   /* Callouts: Obsidian's tinted box unless a scheme or option says otherwise */
@@ -1882,6 +1888,7 @@ body {
   --etc-callout-bar-opacity: var(--callout-border-opacity);
 }
 .theme-light {
+  --etc-glass-opacity: var(--etc-glass-opacity-light);
   --etc-task-yellow: color-mix(in oklch, var(--color-yellow), black 22%);
   --etc-reveal-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 10px 32px rgba(0, 0, 0, 0.14);
   --etc-accent-hover: hsl(var(--accent-h), var(--accent-s), calc(var(--accent-l) * 0.85));
@@ -1889,6 +1896,7 @@ body {
     0 6px 20px rgba(0, 0, 0, calc(0.03 * var(--etc-pane-shadow-strength)));
 }
 .theme-dark {
+  --etc-glass-opacity: var(--etc-glass-opacity-dark);
   --etc-task-yellow: var(--color-yellow);
   --etc-reveal-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 10px 32px rgba(0, 0, 0, 0.5);
   --etc-accent-hover: hsl(var(--accent-h), var(--accent-s), calc(var(--accent-l) * 1.15));
@@ -2792,7 +2800,8 @@ body.etc-h6-case-smallcaps { --etc-h6-transform: none; --etc-h6-variant: small-c
 
 /* ---------- Panes ---------- */
 body.etc-pane-no-outline { --etc-card-outline-width: 0px; }
-body.etc-left-elevated { --etc-window-bg: var(--background-secondary-alt); }
+/* A left sidebar card stands out from a window a shade darker than it */
+body.etc-left-elevated { --etc-window-auto: var(--etc-left-sidebar-shade, var(--background-secondary-alt)); }
 
 /* ---------- Callouts ---------- */
 body:is(.etc-callouts-tinted, .etc-callouts-outlined, .etc-callouts-bar) {
@@ -2937,9 +2946,11 @@ body.etc-inline-title-divider .inline-title {
    6. Panes
    ========================================================================== */
 
-/* ---------- Window behind the cards ---------- */
-body:is(.etc-left-elevated, :is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))), :is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat)))):not(.is-translucent) .workspace {
-  background-color: var(--etc-window-bg);
+/* ---------- Window behind the cards ----------
+   Painted in the window color wherever the window is opaque; a see-through
+   window shows its glass there instead (--etc-window-solid, section 7) */
+body:is(.etc-left-elevated, :is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))), :is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat)))) .workspace {
+  background-color: color-mix(in srgb, var(--etc-window-bg) var(--etc-window-solid), transparent);
 }
 /* Divider lines give way to the gaps between cards */
 body:is(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))), :is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat)))) .workspace {
@@ -3020,7 +3031,7 @@ body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))):has(
    Only when a color is set (or the scheme sets one). Text, icons, hover and
    selection colors are derived from it, light on dark colors and dark on light. */
 body {
-  --etc-ls-probe: var(--etc-left-sidebar-color, var(--etc-p-left-sidebar, none));
+  --etc-ls-probe: var(--etc-left-sidebar, none);
 }
 @container not style(--etc-ls-probe: none) {
   :is(.workspace-split.mod-left-split, .workspace-ribbon.mod-left),
@@ -3094,11 +3105,43 @@ body {
    Obsidian lays a 60% opaque layer over the macOS vibrancy material. This
    thins it to a light tint so the desktop shows through.
    ========================================================================== */
-body.theme-light:is(.etc-glass, :not(.css-settings-manager)).is-translucent:not(.is-fullscreen) {
-  --workspace-background-translucent: color-mix(in srgb, var(--etc-glass-tint) var(--etc-glass-opacity-light), transparent);
+/* How much of the window color the window behind the cards shows: all of it
+   in an opaque window, none in a see-through one, where the glass shows */
+body {
+  --etc-window-solid: 100%;
+  /* What a see-through flat pane shows of its own: nothing until the tint is opaque */
+  --etc-glass-surface: color-mix(in srgb, var(--etc-glass-tint) var(--etc-window-solid), transparent);
 }
-body.theme-dark:is(.etc-glass, :not(.css-settings-manager)).is-translucent:not(.is-fullscreen) {
-  --workspace-background-translucent: color-mix(in srgb, var(--etc-glass-tint) var(--etc-glass-opacity-dark), transparent);
+body.is-translucent:not(.is-fullscreen) {
+  --etc-window-solid: 0%;
+}
+body:is(.etc-glass, :not(.css-settings-manager)).is-translucent:not(.is-fullscreen) {
+  --workspace-background-translucent: color-mix(in srgb, var(--etc-glass-tint) var(--etc-glass-opacity), transparent);
+  /* At full tint strength nothing shows through, so the window is opaque again */
+  --etc-window-solid: clamp(0%, (var(--etc-glass-opacity) - 99%) * 100, 100%);
+}
+
+/* With the right sidebar a card and the editor solid or a card, the glass shows
+   only the window (and a flat left sidebar, which the window matches), so it
+   takes the window's color */
+:is(.theme-light, .theme-dark):where(.etc-right-elevated, .etc-scheme-griply:not(.etc-right-flat)):where(.etc-main-elevated, .etc-scheme-griply:not(.etc-main-flat), :not(.etc-glass-all)) {
+  --etc-glass-tint: var(--etc-window-auto);
+}
+
+/* Flat panes show the glass, not the window behind the cards: once the window
+   is painted they take the glass's color themselves */
+body:not(:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat)))).is-translucent:not(.is-fullscreen) .workspace > .workspace-split.mod-right-split:not(.is-sidedock-collapsed),
+body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))).etc-glass-all.is-translucent:not(.is-fullscreen) .workspace > .workspace-split.mod-root {
+  background-color: var(--etc-glass-surface) !important;
+}
+/* ...and so does a flat left sidebar without a color of its own (one with a
+   color is painted solid, section 6). The ribbon rule stays below the
+   hover-to-reveal ones. */
+@container style(--etc-ls-probe: none) {
+  body:not(.etc-left-elevated).is-translucent:not(.is-fullscreen) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed),
+  body:not(.etc-left-elevated).is-translucent:not(.is-fullscreen) .workspace-ribbon.mod-left {
+    background-color: var(--etc-glass-surface) !important;
+  }
 }
 
 /* Sidebars only: the editor stays solid */
@@ -3693,8 +3736,8 @@ body:is(:is(.etc-reveal-ribbon, :not(.css-settings-manager)), :is(.etc-reveal-le
 }
 
 /* Tucked-away edges take the color of what sits next to them, so they can't
-   be seen: the editor's color beside a flat solid editor, otherwise nothing
-   (the window behind elevated cards, or the glass) */
+   be seen. Beside the editor: its color when it is flat and solid, the glass
+   when it is see-through, otherwise nothing (the window behind the cards) */
 body {
   --etc-reveal-edge-bg: transparent;
 }
@@ -3702,10 +3745,24 @@ body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))
   --etc-reveal-edge-bg: var(--background-primary);
 }
 body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))).is-translucent:not(.is-fullscreen) {
-  --etc-reveal-edge-bg: transparent;
+  --etc-reveal-edge-bg: var(--etc-glass-surface);
 }
 body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))):is(.etc-glass, :not(.css-settings-manager)):not(.etc-glass-all).is-translucent:not(.is-fullscreen) {
   --etc-reveal-edge-bg: var(--background-primary);
+}
+/* The ribbon's edge sits beside the left sidebar while that is open: the
+   sidebar's own color when it is flat (its custom color, from section 6, or
+   the glass when it is see-through), the window when it is a card */
+body:not(.etc-left-elevated) .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed)) > .workspace-ribbon.mod-left {
+  --etc-reveal-edge-bg: var(--background-secondary);
+}
+@container style(--etc-ls-probe: none) {
+  body:not(.etc-left-elevated).is-translucent:not(.is-fullscreen) .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed)) > .workspace-ribbon.mod-left {
+    --etc-reveal-edge-bg: var(--etc-glass-surface);
+  }
+}
+body.etc-left-elevated .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed)) > .workspace-ribbon.mod-left {
+  --etc-reveal-edge-bg: transparent;
 }
 
 /* ---------- Ribbon ---------- */
