@@ -70,6 +70,7 @@ settings:
   -
     id: "background-primary"
     title: "Editor background"
+    description: "Also the window behind elevated sidebars while the editor is flat."
     type: "variable-themed-color"
     format: "hex"
     opacity: false
@@ -78,7 +79,7 @@ settings:
   -
     id: "background-secondary"
     title: "Sidebar background"
-    description: "Also the window behind elevated cards, unless the left sidebar has a color of its own."
+    description: "Also the window behind an elevated editor, unless the left sidebar has a color of its own."
     type: "variable-themed-color"
     format: "hex"
     opacity: false
@@ -211,7 +212,7 @@ settings:
   -
     id: "etc-window-bg"
     title: "Window background"
-    description: "Shows in the gaps between cards. Defaults to the left sidebar's color, a shade darker when the left sidebar is a card. A translucent window shows its glass there instead, unless the tint strength is 100."
+    description: "Shows in the gaps between cards. Defaults to the editor's color while the editor is flat, otherwise the left sidebar's color, a shade darker when the left sidebar is a card too. A translucent window shows its glass there instead, unless the tint strength is 100."
     type: "variable-themed-color"
     format: "hex"
     opacity: false
@@ -226,7 +227,7 @@ settings:
   -
     id: "etc-left-sidebar-color"
     title: "Left sidebar color"
-    description: "Leave untouched to use the scheme's sidebar color. Text and icons switch between light and dark to stay readable, and the window behind elevated cards follows it."
+    description: "Leave untouched to use the scheme's sidebar color. Text and icons switch between light and dark to stay readable, and the window behind an elevated editor follows it."
     type: "variable-themed-color"
     format: "hex"
     opacity: false
@@ -461,7 +462,7 @@ settings:
   -
     id: "etc-glass-tint"
     title: "Tint color"
-    description: "Defaults to the scheme's sidebar color. When the right sidebar is a card and the editor isn't see-through, it follows the left sidebar's color instead, as the window background does."
+    description: "Defaults to the scheme's sidebar color. When the editor and right sidebar are both cards, it follows the window background's default instead."
     type: "variable-themed-color"
     format: "hex"
     opacity: false
@@ -1881,7 +1882,8 @@ body {
      so var(--etc-left-sidebar, x) falls back to x */
   --etc-left-sidebar: var(--etc-left-sidebar-color, var(--etc-p-left-sidebar));
   --etc-left-sidebar-shade: oklch(from var(--etc-left-sidebar) calc(l - 0.03) c h);
-  /* The window behind the cards carries on from a flat left sidebar */
+  /* The window behind the cards carries on from the flat pane beside them: the
+     left sidebar here, the editor when it is flat (Panes options) */
   --etc-window-auto: var(--etc-left-sidebar, var(--background-secondary));
   --etc-window-bg: var(--etc-window-auto);
   --nav-item-radius: 6px;
@@ -2806,6 +2808,8 @@ body.etc-h6-case-smallcaps { --etc-h6-transform: none; --etc-h6-variant: small-c
 body.etc-pane-no-outline { --etc-card-outline-width: 0px; }
 /* A left sidebar card stands out from a window a shade darker than it */
 body.etc-left-elevated { --etc-window-auto: var(--etc-left-sidebar-shade, var(--background-secondary-alt)); }
+/* Cards beside a flat editor sit on the editor's color */
+body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))) { --etc-window-auto: var(--background-primary); }
 
 /* ---------- Callouts ---------- */
 body:is(.etc-callouts-tinted, .etc-callouts-outlined, .etc-callouts-bar) {
@@ -3128,11 +3132,15 @@ body:is(.etc-glass, :not(.css-settings-manager)).is-translucent:not(.is-fullscre
   --etc-window-solid: clamp(0%, (var(--etc-glass-opacity) - 99%) * 100, 100%);
 }
 
-/* With the right sidebar a card and the editor solid or a card, the glass shows
-   only the window (and a flat left sidebar, which the window matches), so it
+/* With the editor and right sidebar both cards, the glass shows only the
+   window (and a flat left sidebar, which the window then matches), so it
    takes the window's color */
-:is(.theme-light, .theme-dark):where(.etc-right-elevated, .etc-scheme-griply:not(.etc-right-flat)):where(.etc-main-elevated, .etc-scheme-griply:not(.etc-main-flat), :not(.etc-glass-all)) {
+:is(.theme-light, .theme-dark):where(.etc-right-elevated, .etc-scheme-griply:not(.etc-right-flat)):where(.etc-main-elevated, .etc-scheme-griply:not(.etc-main-flat)) {
   --etc-glass-tint: var(--etc-window-auto);
+}
+/* A see-through flat editor shows the glass, so the window it carries on into does too */
+body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))).etc-glass-all.is-translucent:not(.is-fullscreen) {
+  --etc-window-auto: var(--etc-glass-tint);
 }
 
 /* Flat panes show the glass, not the window behind the cards: once the window

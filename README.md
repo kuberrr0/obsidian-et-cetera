@@ -8,7 +8,7 @@ A calm, configurable theme for [Obsidian](https://obsidian.md). Pick a color sch
 
 - **Color scheme presets:** Things (default), Apple Notes, Bear, Griply and Obsidian, each with light and dark modes. Override the accent, backgrounds, text, borders and highlight independently.
 - **Pane design:** make the left sidebar, editor and right sidebar flat or elevated cards (Griply elevates the editor and right sidebar by default). You can adjust the gap, corner radius, shadow strength, outline and the window color behind them. The settings window follows the same layout and colors, and stays opaque.
-- **Left sidebar color:** pick any color. Text and icons switch between light and dark to stay readable, and the window behind elevated cards follows it.
+- **Left sidebar color:** pick any color. Text and icons switch between light and dark to stay readable, and the window behind an elevated editor follows it.
 - **Enhanced transparency:** on by default. It replaces Obsidian's heavy grey overlay with a light tint so the desktop shows through. You can make just the sidebars see-through, or the whole window, and set separate tint strengths for light and dark mode.
 - **UI borders:** borderless or hairline window edges, a custom UI border color, and optional rules under pane headers.
 - **Headings:** color, size, weight, alignment, font, letter case, letter spacing, line height and spacing for all headings. Dividers under any heading levels, with their own color, thickness, style and gap. Every setting can be overridden per level, H1 to H6, and the note title has its own settings.
