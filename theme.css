@@ -10,6 +10,10 @@
      3. Option classes              body.etc-*                   (0,1,1)
      4. Style Settings values       body.css-settings-manager    (0,1,1)+
    Presets wrap their class in :where() so any Style Settings value beats them.
+
+   The left ribbon is .mod-left before Obsidian 1.14 and only .mod-primary
+   from 1.14 on, so it is matched as :is(.mod-left, .mod-primary). Splits and
+   sidebar buttons carry both names.
    ========================================================================== */
 
 /* @settings
@@ -2993,7 +2997,7 @@ body:is(.etc-right-elevated, .etc-scheme-griply:where(:not(.etc-right-flat))) .w
 /* Main card needs its own left gap when nothing flat sits beside it */
 body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))).etc-left-elevated .workspace > .workspace-split.mod-root,
 body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed + .workspace-split.mod-root,
-body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))) .workspace > .workspace-ribbon.mod-left + .workspace-split.mod-root {
+body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary) + .workspace-split.mod-root {
   margin-left: var(--etc-pane-gap);
 }
 /* Right card next to a flat editor needs its own left gap */
@@ -3034,7 +3038,7 @@ body {
   --etc-ls-probe: var(--etc-left-sidebar, none);
 }
 @container not style(--etc-ls-probe: none) {
-  :is(.workspace-split.mod-left-split, .workspace-ribbon.mod-left),
+  :is(.workspace-split.mod-left-split, .workspace-ribbon:is(.mod-left, .mod-primary)),
   body:not(.etc-settings-plain, .is-mobile) .modal.mod-settings .vertical-tab-header {
     --etc-ls: var(--etc-ls-probe);
     /* Text that doesn't set its own color inherits it, already resolved from
@@ -3092,8 +3096,8 @@ body {
     .workspace-split.mod-left-split .view-content,
     .workspace-split.mod-left-split .nav-header,
     .workspace-split.mod-left-split .workspace-sidedock-vault-profile,
-    .workspace-ribbon.mod-left,
-    .workspace-ribbon.mod-left::before
+    .workspace-ribbon:is(.mod-left, .mod-primary),
+    .workspace-ribbon:is(.mod-left, .mod-primary)::before
   ) {
     background-color: var(--etc-ls) !important;
   }
@@ -3142,7 +3146,7 @@ body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))
    hover-to-reveal ones. */
 @container style(--etc-ls-probe: none) {
   body:not(.etc-left-elevated).is-translucent:not(.is-fullscreen) .workspace > .workspace-split.mod-left-split:not(.is-sidedock-collapsed),
-  body:not(.etc-left-elevated).is-translucent:not(.is-fullscreen) .workspace-ribbon.mod-left {
+  body:not(.etc-left-elevated).is-translucent:not(.is-fullscreen) .workspace-ribbon:is(.mod-left, .mod-primary) {
     background-color: var(--etc-glass-surface) !important;
   }
 }
@@ -3183,7 +3187,7 @@ body:not(.etc-chrome-hairline) {
 }
 body:not(.etc-chrome-hairline) :is(
   .workspace-ribbon,
-  .workspace-ribbon.mod-left,
+  .workspace-ribbon:is(.mod-left, .mod-primary),
   .workspace-split.mod-left-split,
   .workspace-split.mod-right-split,
   .workspace-tab-header-container,
@@ -3756,15 +3760,15 @@ body:not(:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat)))
 /* The ribbon's edge sits beside the left sidebar while that is open: the
    sidebar's own color when it is flat (its custom color, from section 6, or
    the glass when it is see-through), the window when it is a card */
-body:not(.etc-left-elevated) .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed)) > .workspace-ribbon.mod-left {
+body:not(.etc-left-elevated) .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed)) > .workspace-ribbon:is(.mod-left, .mod-primary) {
   --etc-reveal-edge-bg: var(--background-secondary);
 }
 @container style(--etc-ls-probe: none) {
-  body:not(.etc-left-elevated).is-translucent:not(.is-fullscreen) .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed)) > .workspace-ribbon.mod-left {
+  body:not(.etc-left-elevated).is-translucent:not(.is-fullscreen) .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed)) > .workspace-ribbon:is(.mod-left, .mod-primary) {
     --etc-reveal-edge-bg: var(--etc-glass-surface);
   }
 }
-body.etc-left-elevated .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed)) > .workspace-ribbon.mod-left {
+body.etc-left-elevated .workspace:has(> .workspace-split.mod-left-split:not(.is-sidedock-collapsed)) > .workspace-ribbon:is(.mod-left, .mod-primary) {
   --etc-reveal-edge-bg: transparent;
 }
 
@@ -3776,7 +3780,7 @@ body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mob
 body.mod-macos:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-popout-window) {
   --frame-left-space: calc(80px - var(--etc-reveal-strip));
 }
-body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary) {
   position: relative;
   z-index: calc(var(--layer-sidedock) + 2);
   /* Full height, so the edge has no gap above it; the corner piece moves inside */
@@ -3790,21 +3794,21 @@ body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mob
   transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-reveal-close-delay), box-shadow var(--etc-toolbar-duration) ease var(--etc-reveal-close-delay),
     background-color 0s linear calc(var(--etc-reveal-close-delay) + var(--etc-toolbar-duration));
 }
-body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left::before {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary)::before {
   background-color: inherit !important;
   border-bottom-color: transparent;
 }
-body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left > * {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary) > * {
   opacity: 0;
   transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-reveal-close-delay);
 }
-body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)) {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)) {
   transform: none;
   box-shadow: var(--etc-reveal-shadow);
   background-color: var(--ribbon-background) !important;
   transition-delay: var(--etc-reveal-open-delay);
 }
-body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)) > * {
+body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)) > * {
   opacity: 1;
   transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
 }
@@ -3813,7 +3817,7 @@ body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mob
    Only a closed sidebar is revealed: Obsidian hides it (display: none,
    width: 0), so it is shown again here as an overlay at a set width with
    just the edge peeking out. An open sidebar is left exactly as it is. */
-body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-ribbon.mod-left {
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary) {
   order: -2;
 }
 /* Placeholders hold the edge in the layout so the editor's own edges
@@ -3894,22 +3898,22 @@ body.mod-macos:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-revea
   --frame-left-space: calc(80px - var(--ribbon-width));
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
-  > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
   > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
-) > :is(.workspace-ribbon.mod-left, .workspace-split.mod-left-split.is-sidedock-collapsed) {
+) > :is(.workspace-ribbon:is(.mod-left, .mod-primary), .workspace-split.mod-left-split.is-sidedock-collapsed) {
   transition-delay: var(--etc-reveal-open-delay);
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
-  > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
   > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
-) > .workspace-ribbon.mod-left {
+) > .workspace-ribbon:is(.mod-left, .mod-primary) {
   transform: none;
   /* The sidebar's shadow covers both */
   box-shadow: none;
   background-color: var(--ribbon-background) !important;
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
-  > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
   > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
 ) > .workspace-split.mod-left-split.is-sidedock-collapsed {
   transform: translateX(calc(var(--ribbon-width) - var(--etc-reveal-strip)));
@@ -3917,9 +3921,9 @@ body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :n
   background-color: var(--background-secondary) !important;
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
-  > .workspace-ribbon.mod-left:is(:hover, :focus-within, :has(.has-active-menu)),
+  > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
   > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu))
-) > :is(.workspace-ribbon.mod-left, .workspace-split.mod-left-split.is-sidedock-collapsed) > * {
+) > :is(.workspace-ribbon:is(.mod-left, .mod-primary), .workspace-split.mod-left-split.is-sidedock-collapsed) > * {
   opacity: 1;
   transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
 }
@@ -4012,7 +4016,7 @@ body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .worksp
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon.mod-left,
+  body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary),
   body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed,
   body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed {
     transition: none;
