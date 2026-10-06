@@ -3037,6 +3037,9 @@ body {
   :is(.workspace-split.mod-left-split, .workspace-ribbon.mod-left),
   body:not(.etc-settings-plain, .is-mobile) .modal.mod-settings .vertical-tab-header {
     --etc-ls: var(--etc-ls-probe);
+    /* Text that doesn't set its own color inherits it, already resolved from
+       the window's palette, so restart it from the derived one */
+    color: var(--text-normal);
     --background-secondary: var(--etc-ls);
     --background-secondary-alt: var(--etc-ls);
     --background-primary: var(--etc-ls);
