@@ -3236,9 +3236,9 @@ body:not(.etc-show-focus-ring) :is(
   textarea,
   .search-input-container input
 ):is(:focus, :focus-visible, :active) {
-  box-shadow: none !important;
-  outline: none !important;
-  border-color: var(--background-modifier-border) !important;
+  box-shadow: none;
+  outline: none;
+  border-color: var(--background-modifier-border);
 }
 
 /* ==========================================================================
@@ -3540,7 +3540,7 @@ body:is(.etc-status-floating, :is(.etc-scheme-apple-notes, .etc-scheme-griply):w
   padding-inline: var(--size-4-2);
   border: var(--etc-card-outline-width) solid var(--etc-ui-border-color) !important;
   border-radius: 8px !important;
-  background-color: var(--background-primary) !important;
+  background-color: var(--background-primary);
   box-shadow: var(--etc-pane-shadow) !important;
 }
 body:is(.etc-status-floating, :is(.etc-scheme-apple-notes, .etc-scheme-griply):where(:not(.etc-status-docked))).etc-status-right:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile):has(.workspace > .workspace-split.mod-right-split.is-sidedock-collapsed) .status-bar {
@@ -3571,7 +3571,7 @@ body:not(.etc-status-right) {
 }
 /* :not() twice so this outweighs the floating pill rule above */
 body:not(.etc-status-right):not(.is-mobile) .status-bar {
-  left: 50% !important;
+  left: 50%;
   right: auto !important;
   transform: translateX(-50%);
   padding-inline: var(--size-4-2);
@@ -3583,7 +3583,7 @@ body:not(.etc-status-right, :is(.etc-status-floating, :is(.etc-scheme-apple-note
 /* Docked inside an elevated editor card, along its bottom edge */
 body:is(.etc-main-elevated, .etc-scheme-griply:where(:not(.etc-main-flat))):not(.etc-status-right, :is(.etc-status-floating, :is(.etc-scheme-apple-notes, .etc-scheme-griply):where(:not(.etc-status-docked))), .is-mobile) .status-bar {
   bottom: calc(var(--etc-pane-gap) + 1px) !important;
-  background-color: var(--background-primary) !important;
+  background-color: var(--background-primary);
 }
 
 /* ---------- Inline HTML in notes ---------- */
@@ -3665,17 +3665,27 @@ body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:has(> .n
   transition-delay: calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.3);
 }
 
-/* Collapsed: a short strip with the ellipsis */
+/* Collapsed: a short strip with the ellipsis. The header holds the collapsed
+   values and clears them when open, so each part falls back to its open value. */
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header {
+  --etc-tb-closed-max-height: var(--etc-toolbar-height);
+  --etc-tb-closed-height: var(--etc-toolbar-height);
+  --etc-tb-closed-delay: calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.3);
+  --etc-tb-closed-buttons: 0;
+  --etc-tb-closed-buttons-transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-toolbar-close-delay);
+  --etc-tb-closed-glyph: 1;
+  --etc-tb-closed-glyph-transition: opacity calc(var(--etc-toolbar-duration) * 0.6) ease-in-out
+    calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.5);
+}
 body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header .nav-buttons-container {
   position: relative;
-  max-height: var(--etc-toolbar-height);
+  max-height: var(--etc-tb-closed-max-height, var(--etc-toolbar-open-height));
   overflow: hidden;
-  transition: max-height var(--etc-toolbar-duration) var(--etc-toolbar-ease)
-    calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.3);
+  transition: max-height var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-tb-closed-delay, 0s);
 }
 body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header .nav-buttons-container > * {
-  opacity: 0;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-toolbar-close-delay);
+  opacity: var(--etc-tb-closed-buttons, 1);
+  transition: var(--etc-tb-closed-buttons-transition, opacity var(--etc-toolbar-duration) ease-out calc(var(--etc-toolbar-duration) * 0.35));
 }
 body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header .nav-buttons-container::after {
   content: var(--etc-toolbar-glyph);
@@ -3688,22 +3698,19 @@ body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header .nav-but
   font-size: var(--etc-toolbar-size);
   line-height: 1;
   pointer-events: none;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.6) ease-in-out
-    calc(var(--etc-toolbar-close-delay) + var(--etc-toolbar-duration) * 0.5);
+  opacity: var(--etc-tb-closed-glyph, 0);
+  transition: var(--etc-tb-closed-glyph-transition, opacity calc(var(--etc-toolbar-duration) * 0.4) ease-out 0s);
 }
 
 /* Open: hover, keyboard focus, or a button's menu is open */
-body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hover, :focus-within, :has(.has-active-menu)) .nav-buttons-container {
-  max-height: var(--etc-toolbar-open-height);
-  transition-delay: 0s;
-}
-body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hover, :focus-within, :has(.has-active-menu)) .nav-buttons-container > * {
-  opacity: 1;
-  transition: opacity var(--etc-toolbar-duration) ease-out calc(var(--etc-toolbar-duration) * 0.35);
-}
-body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hover, :focus-within, :has(.has-active-menu)) .nav-buttons-container::after {
-  opacity: 0;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.4) ease-out 0s;
+body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hover, :focus-within, :has(.has-active-menu)) {
+  --etc-tb-closed-max-height: initial;
+  --etc-tb-closed-height: initial;
+  --etc-tb-closed-delay: initial;
+  --etc-tb-closed-buttons: initial;
+  --etc-tb-closed-buttons-transition: initial;
+  --etc-tb-closed-glyph: initial;
+  --etc-tb-closed-glyph-transition: initial;
 }
 
 /* Animate to the toolbar's real height where supported */
@@ -3711,12 +3718,8 @@ body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hove
   body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header .nav-buttons-container {
     interpolate-size: allow-keywords;
     max-height: none;
-    height: var(--etc-toolbar-height);
+    height: var(--etc-tb-closed-height, auto);
     transition-property: height;
-  }
-  body:not(.etc-toolbar-always) .workspace-split.mod-sidedock .nav-header:is(:hover, :focus-within, :has(.has-active-menu)) .nav-buttons-container {
-    max-height: none;
-    height: auto;
   }
 }
 
@@ -3789,6 +3792,9 @@ body.mod-macos:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:n
   --frame-left-space: calc(80px - var(--etc-reveal-strip));
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary) {
+  /* Its buttons, hidden while it is tucked away; cleared when it comes out */
+  --etc-ribbon-kids-opacity: 0;
+  --etc-ribbon-kids-delay: var(--etc-reveal-close-delay);
   position: relative;
   z-index: calc(var(--layer-sidedock) + 2);
   /* Full height, so the edge has no gap above it; the corner piece moves inside */
@@ -3807,18 +3813,16 @@ body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mob
   border-bottom-color: transparent;
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary) > * {
-  opacity: 0;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-reveal-close-delay);
+  opacity: var(--etc-ribbon-kids-opacity, 1);
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-ribbon-kids-delay, calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3));
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)) {
+  --etc-ribbon-kids-opacity: initial;
+  --etc-ribbon-kids-delay: initial;
   transform: none;
   box-shadow: var(--etc-reveal-shadow);
   background-color: var(--ribbon-background) !important;
   transition-delay: var(--etc-reveal-open-delay);
-}
-body:is(.etc-reveal-ribbon, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)) > * {
-  opacity: 1;
-  transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
 }
 
 /* ---------- Sidebars ----------
@@ -3845,6 +3849,9 @@ body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspa
 
 body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed,
 body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed {
+  /* Its contents, hidden while it is tucked away; cleared when it comes out */
+  --etc-side-kids-opacity: 0;
+  --etc-side-kids-delay: var(--etc-reveal-close-delay);
   /* !important beats the inline display and width Obsidian sets when closing */
   display: flex !important;
   width: var(--etc-reveal-width) !important;
@@ -3869,8 +3876,8 @@ body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspa
 }
 body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed > *,
 body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed > * {
-  opacity: 0;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-reveal-close-delay);
+  opacity: var(--etc-side-kids-opacity, 1);
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-side-kids-delay, calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3));
 }
 /* Obsidian hides a closed sidebar's tabs in translucent mode */
 body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tabs,
@@ -3883,18 +3890,13 @@ body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspac
 body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-left:hover) > .workspace-split.mod-left-split.is-sidedock-collapsed,
 body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
 body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-right:hover) > .workspace-split.mod-right-split.is-sidedock-collapsed {
+  --etc-side-kids-opacity: initial;
+  --etc-side-kids-delay: initial;
   transform: none;
   box-shadow: var(--etc-reveal-shadow) !important;
   /* Floating over the editor, so never see-through */
   background-color: var(--background-secondary) !important;
   transition-delay: var(--etc-reveal-open-delay);
-}
-body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)) > *,
-body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-left:hover) > .workspace-split.mod-left-split.is-sidedock-collapsed > *,
-body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)) > *,
-body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-right:hover) > .workspace-split.mod-right-split.is-sidedock-collapsed > * {
-  opacity: 1;
-  transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
 }
 /* An overlay, not a title bar: a drag region would also swallow the clicks
    and hover of the toggle button floating over it */
@@ -3902,7 +3904,7 @@ body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspac
 body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tab-header-container *,
 body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tab-header-container,
 body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tab-header-container * {
-  -webkit-app-region: no-drag !important;
+  -webkit-app-region: no-drag;
 }
 
 /* ---------- Ribbon and closed left sidebar together ----------
@@ -3923,35 +3925,26 @@ body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :n
   > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
   > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
   > .workspace-split.mod-root .sidebar-toggle-button.mod-left:hover
-) > :is(.workspace-ribbon:is(.mod-left, .mod-primary), .workspace-split.mod-left-split.is-sidedock-collapsed) {
+) > .workspace-ribbon:is(.mod-left, .mod-primary) {
+  --etc-ribbon-kids-opacity: initial;
+  --etc-ribbon-kids-delay: initial;
+  transform: none;
+  /* The sidebar's shadow covers both */
+  box-shadow: none;
+  background-color: var(--ribbon-background) !important;
   transition-delay: var(--etc-reveal-open-delay);
 }
 body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
   > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
   > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
   > .workspace-split.mod-root .sidebar-toggle-button.mod-left:hover
-) > .workspace-ribbon:is(.mod-left, .mod-primary) {
-  transform: none;
-  /* The sidebar's shadow covers both */
-  box-shadow: none;
-  background-color: var(--ribbon-background) !important;
-}
-body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
-  > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
-  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
-  > .workspace-split.mod-root .sidebar-toggle-button.mod-left:hover
 ) > .workspace-split.mod-left-split.is-sidedock-collapsed {
+  --etc-side-kids-opacity: initial;
+  --etc-side-kids-delay: initial;
   transform: translateX(calc(var(--ribbon-width) - var(--etc-reveal-strip)));
   box-shadow: var(--etc-reveal-shadow) !important;
   background-color: var(--background-secondary) !important;
-}
-body:is(.etc-reveal-ribbon, :not(.css-settings-manager)):is(.etc-reveal-left, :not(.css-settings-manager)).show-ribbon:not(.is-mobile) .workspace:has(
-  > .workspace-ribbon:is(.mod-left, .mod-primary):is(:hover, :focus-within, :has(.has-active-menu)),
-  > .workspace-split.mod-left-split.is-sidedock-collapsed:is(:hover, :focus-within, :has(.has-active-menu)),
-  > .workspace-split.mod-root .sidebar-toggle-button.mod-left:hover
-) > :is(.workspace-ribbon:is(.mod-left, .mod-primary), .workspace-split.mod-left-split.is-sidedock-collapsed) > * {
-  opacity: 1;
-  transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
+  transition-delay: var(--etc-reveal-open-delay);
 }
 
 /* ---------- Toggle buttons of closed sidebars ----------
@@ -3992,18 +3985,18 @@ body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspa
   --etc-toggle-right: var(--frame-right-space);
 }
 /* Room for them in the sidebars' tab bars (Obsidian keeps the same room for
-   its right button on macOS) */
-body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-left) > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
-  padding-left: 38px;
+   its right button on macOS), plus the window-button space when the window
+   has no frame */
+body:not(.is-hidden-frameless),
+body.is-fullscreen {
+  --etc-toggle-frame-left: 0px;
+  --etc-toggle-frame-right: 0px;
 }
-body:is(.etc-reveal-left, :not(.css-settings-manager)).is-hidden-frameless:not(.is-mobile, .is-fullscreen) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-left) > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
-  padding-left: calc(38px + var(--frame-left-space));
+body:is(.etc-reveal-left, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-left) > .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tabs.mod-top-left-space .workspace-tab-header-container {
+  padding-left: calc(38px + var(--etc-toggle-frame-left, var(--frame-left-space)));
 }
 body:is(.etc-reveal-right, :not(.css-settings-manager)):not(.is-mobile) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-right) > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tabs.mod-top-right-space .workspace-tab-header-container {
-  padding-right: 38px;
-}
-body:is(.etc-reveal-right, :not(.css-settings-manager)).is-hidden-frameless:not(.is-mobile, .is-fullscreen) .workspace:has(.workspace-split.mod-root .sidebar-toggle-button.mod-right) > .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tabs.mod-top-right-space .workspace-tab-header-container {
-  padding-right: calc(38px + var(--frame-right-space));
+  padding-right: calc(38px + var(--etc-toggle-frame-right, var(--frame-right-space)));
 }
 
 /* While the left sidebar is closed the editor's top-left tab bar holds the
@@ -4046,29 +4039,41 @@ body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .worksp
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content {
   position: relative;
 }
+/* Closed, the tab bar and header take these values from the tab group; open,
+   the tab group clears them so each falls back to its open value */
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs {
+  --etc-hdr-closed-top: calc(var(--etc-reveal-hit) - var(--header-height));
+  --etc-hdr-closed-transform: translateY(calc(var(--etc-reveal-hit) - 100%));
+  --etc-hdr-closed-bg: transparent;
+  --etc-hdr-closed-shadow: none;
+  --etc-hdr-closed-opacity: 0;
+  --etc-hdr-closed-delay: var(--etc-reveal-close-delay);
+  --etc-hdr-closed-bg-delay: calc(var(--etc-reveal-close-delay) + var(--etc-toolbar-duration));
+}
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container,
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header {
   position: absolute;
   inset: 0 0 auto 0;
-  background-color: transparent !important;
   border-bottom-color: transparent !important;
   box-shadow: none;
-  transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-reveal-close-delay),
-    box-shadow var(--etc-toolbar-duration) ease var(--etc-reveal-close-delay),
-    background-color 0s linear calc(var(--etc-reveal-close-delay) + var(--etc-toolbar-duration));
+  transition: transform var(--etc-toolbar-duration) var(--etc-toolbar-ease) var(--etc-hdr-closed-delay, var(--etc-reveal-open-delay)),
+    box-shadow var(--etc-toolbar-duration) ease var(--etc-hdr-closed-delay, var(--etc-reveal-open-delay)),
+    background-color 0s linear var(--etc-hdr-closed-bg-delay, var(--etc-reveal-open-delay));
 }
 /* Window drag regions (macOS) get no hover events, so these can't be dragged by */
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container,
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container *,
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header,
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header * {
-  -webkit-app-region: no-drag !important;
+  -webkit-app-region: no-drag;
 }
+/* !important beats Obsidian's translucent-window rule, which clears their backgrounds */
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container {
   z-index: 4;
   /* Moved by its offset rather than a transform, which would trap the toggle
      buttons floating out of it (see Toggle buttons of closed sidebars) */
-  top: calc(var(--etc-reveal-hit) - var(--header-height));
+  top: var(--etc-hdr-closed-top, 0);
+  background-color: var(--etc-hdr-closed-bg, var(--tab-container-background)) !important;
   transition-property: top, box-shadow, background-color;
 }
 /* ...and while a sidebar is out it drops its layer, so they can rise above it */
@@ -4077,28 +4082,24 @@ body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .worksp
 }
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header {
   z-index: 3;
-  transform: translateY(calc(var(--etc-reveal-hit) - 100%));
+  transform: var(--etc-hdr-closed-transform, translateY(var(--etc-tabbar-h)));
+  background-color: var(--etc-hdr-closed-bg, var(--background-primary)) !important;
+  box-shadow: var(--etc-hdr-closed-shadow, 0 8px 20px -10px rgba(0, 0, 0, 0.3));
 }
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs > .workspace-tab-header-container > *,
 body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs .workspace-leaf-content > .view-header > * {
-  opacity: 0;
-  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-reveal-close-delay);
+  opacity: var(--etc-hdr-closed-opacity, 1);
+  transition: opacity calc(var(--etc-toolbar-duration) * 0.5) ease-out var(--etc-hdr-closed-delay, calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3));
 }
-body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container > :not(.sidebar-toggle-button):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) > .workspace-tab-header-container {
-  top: 0;
-  background-color: var(--tab-container-background) !important;
-  transition-delay: var(--etc-reveal-open-delay);
-}
-body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container > :not(.sidebar-toggle-button):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) .workspace-leaf-content > .view-header {
-  transform: translateY(var(--etc-tabbar-h));
-  background-color: var(--background-primary) !important;
-  box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.3);
-  transition-delay: var(--etc-reveal-open-delay);
-}
-body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container > :not(.sidebar-toggle-button):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) > .workspace-tab-header-container > *,
-body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container > :not(.sidebar-toggle-button):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) .workspace-leaf-content > .view-header > * {
-  opacity: 1;
-  transition-delay: calc(var(--etc-reveal-open-delay) + var(--etc-toolbar-duration) * 0.3);
+/* Open: either is hovered, focused or showing a menu */
+body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .workspace-split.mod-root .workspace-tabs:has(> .workspace-tab-header-container > :not(.sidebar-toggle-button):is(:hover, :focus-within, :has(.has-active-menu)), .workspace-leaf-content > .view-header:is(:hover, :focus-within, :has(.has-active-menu))) {
+  --etc-hdr-closed-top: initial;
+  --etc-hdr-closed-transform: initial;
+  --etc-hdr-closed-bg: initial;
+  --etc-hdr-closed-shadow: initial;
+  --etc-hdr-closed-opacity: initial;
+  --etc-hdr-closed-delay: initial;
+  --etc-hdr-closed-bg-delay: initial;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4116,10 +4117,11 @@ body:is(.etc-reveal-header, :not(.css-settings-manager)):not(.is-mobile) .worksp
 
 /* ==========================================================================
    13. Mermaid diagrams
-   Mermaid writes its colors into the diagram under an id selector, some of
-   them !important, so these use !important and :not(#etc-mermaid) for the
-   weight of an id. Dark mode normally inverts the light diagram with a
-   filter; the scheme's own colors replace that.
+   Mermaid writes its colors into the diagram under an id selector, so these
+   use :not(#etc-mermaid) for the weight of an id. Only the arrowheads, Gantt
+   task text (!important in Mermaid's own styles) and pie legend swatches
+   (inline styles) need !important. Dark mode normally inverts the light
+   diagram with a filter; the scheme's own colors replace that.
    ========================================================================== */
 body:not(.etc-mermaid-plain) .mermaid {
   --etc-dia-text: var(--text-normal);
@@ -4144,14 +4146,14 @@ body.theme-dark:not(.etc-mermaid-plain) .mermaid > svg {
 
 /* ---------- Shared: text, lines and arrowheads ---------- */
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.nodeLabel, .nodeLabel p, .label, .label text, .edgeLabel, .edgeLabel p) {
-  color: var(--etc-dia-text) !important;
-  fill: var(--etc-dia-text) !important;
+  color: var(--etc-dia-text);
+  fill: var(--etc-dia-text);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.edgeLabel, .edgeLabel p, .labelBkg) {
-  background-color: var(--background-primary) !important;
+  background-color: var(--background-primary);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .edgeLabel rect {
-  fill: var(--background-primary) !important;
+  fill: var(--background-primary);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(marker path, .arrowheadPath, .arrowMarkerPath) {
   fill: var(--etc-dia-line) !important;
@@ -4160,38 +4162,38 @@ body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(marker path, .ar
 
 /* ---------- Flowcharts ---------- */
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .node :is(rect, circle, ellipse, polygon, path) {
-  fill: var(--etc-dia-fill) !important;
-  stroke: var(--etc-dia-stroke) !important;
+  fill: var(--etc-dia-fill);
+  stroke: var(--etc-dia-stroke);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.flowchart-link, .edgePath .path) {
-  stroke: var(--etc-dia-line) !important;
+  stroke: var(--etc-dia-line);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .cluster rect {
-  fill: var(--etc-dia-surface) !important;
-  stroke: var(--etc-dia-border) !important;
+  fill: var(--etc-dia-surface);
+  stroke: var(--etc-dia-border);
 }
 
 /* ---------- Sequence diagrams ---------- */
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) rect.actor {
-  fill: var(--etc-dia-fill) !important;
-  stroke: var(--etc-dia-stroke) !important;
+  fill: var(--etc-dia-fill);
+  stroke: var(--etc-dia-stroke);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(text.actor, text.actor tspan, .messageText, .noteText, .noteText tspan, .labelText, .labelText tspan, .loopText, .loopText tspan) {
-  fill: var(--etc-dia-text) !important;
-  stroke: none !important;
+  fill: var(--etc-dia-text);
+  stroke: none;
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.messageLine0, .messageLine1) {
-  stroke: var(--etc-dia-line) !important;
+  stroke: var(--etc-dia-line);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.actor-line, .loopLine) {
-  stroke: var(--etc-dia-border) !important;
+  stroke: var(--etc-dia-border);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.note, .labelBox, .activation0, .activation1, .activation2) {
-  fill: var(--etc-dia-surface) !important;
-  stroke: var(--etc-dia-border) !important;
+  fill: var(--etc-dia-surface);
+  stroke: var(--etc-dia-border);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .sequenceNumber {
-  fill: var(--background-primary) !important;
+  fill: var(--background-primary);
 }
 
 /* ---------- Gantt charts ---------- */
@@ -4200,52 +4202,52 @@ body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.titleText, .tas
   fill: var(--etc-dia-text) !important;
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.sectionTitle, .sectionTitle0, .sectionTitle1, .sectionTitle2, .sectionTitle3, .grid .tick text) {
-  fill: var(--etc-dia-muted) !important;
+  fill: var(--etc-dia-muted);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .grid .tick line {
-  stroke: var(--etc-dia-border) !important;
+  stroke: var(--etc-dia-border);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .grid path {
-  stroke-width: 0 !important;
+  stroke-width: 0;
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.section0, .section2) {
-  fill: color-mix(in oklch, var(--text-normal) 4%, transparent) !important;
+  fill: color-mix(in oklch, var(--text-normal) 4%, transparent);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.section1, .section3) {
-  fill: transparent !important;
+  fill: transparent;
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.task0, .task1, .task2, .task3) {
-  fill: color-mix(in oklch, var(--color-accent) 22%, var(--background-primary)) !important;
-  stroke: color-mix(in oklch, var(--color-accent) 60%, var(--background-primary)) !important;
+  fill: color-mix(in oklch, var(--color-accent) 22%, var(--background-primary));
+  stroke: color-mix(in oklch, var(--color-accent) 60%, var(--background-primary));
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.active0, .active1, .active2, .active3) {
-  fill: color-mix(in oklch, var(--color-accent) 45%, var(--background-primary)) !important;
-  stroke: var(--color-accent) !important;
+  fill: color-mix(in oklch, var(--color-accent) 45%, var(--background-primary));
+  stroke: var(--color-accent);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.done0, .done1, .done2, .done3) {
-  fill: color-mix(in oklch, var(--text-muted) 22%, var(--background-primary)) !important;
-  stroke: color-mix(in oklch, var(--text-muted) 50%, var(--background-primary)) !important;
+  fill: color-mix(in oklch, var(--text-muted) 22%, var(--background-primary));
+  stroke: color-mix(in oklch, var(--text-muted) 50%, var(--background-primary));
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.crit0, .crit1, .crit2, .crit3, .activeCrit0, .activeCrit1, .activeCrit2, .activeCrit3, .doneCrit0, .doneCrit1, .doneCrit2, .doneCrit3) {
-  fill: color-mix(in oklch, var(--color-red) 30%, var(--background-primary)) !important;
-  stroke: var(--color-red) !important;
+  fill: color-mix(in oklch, var(--color-red) 30%, var(--background-primary));
+  stroke: var(--color-red);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .today {
-  stroke: var(--color-red) !important;
+  stroke: var(--color-red);
 }
 
 /* ---------- Pie charts ----------
    Slices and legend entries are both in data order, so the nth of each match. */
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .pieCircle {
-  stroke: var(--background-primary) !important;
-  stroke-width: 2px !important;
-  opacity: 1 !important;
+  stroke: var(--background-primary);
+  stroke-width: 2px;
+  opacity: 1;
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) .pieOuterCircle {
-  stroke: var(--etc-dia-border) !important;
+  stroke: var(--etc-dia-border);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieTitleText, .slice, .legend text) {
-  fill: var(--etc-dia-text) !important;
+  fill: var(--etc-dia-text);
 }
 body:not(.etc-mermaid-plain) .mermaid svg:not(#etc-mermaid) :is(.pieCircle:nth-of-type(8n+1), g.legend:nth-of-type(8n+1) rect) {
   fill: color-mix(in oklch, var(--etc-dia-1) 60%, var(--background-primary)) !important;
